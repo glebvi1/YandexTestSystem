@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <form action="/{{ role }}/registration" method="POST" novalidate>
+        <div>
+            {{ form.csrf_token }}
+        </div>
+        {% for field in form if field.name != 'csrf_token' %}
+            <div>
+                {{ field.label() }}
+                {{ field() }}
+                {% for error in field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+
+    <a href="/users/login">Вход</a>
+{% endblock %}
