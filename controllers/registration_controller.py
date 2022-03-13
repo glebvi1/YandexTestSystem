@@ -1,16 +1,16 @@
 from flask import render_template, Blueprint
 from flask import request
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import redirect
 
 from data.db_session import create_session
 from data.user import User
 from forms.register_form import LoginForm, RegistrationForm
 
-registration_page = Blueprint("registration_page", __name__, template_folder="templates")
+user_page = Blueprint("user_page", __name__, template_folder="templates")
 
 
-@registration_page.route("/users/login", methods=["GET", "POST"])
+@user_page.route("/users/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
 
@@ -21,7 +21,7 @@ def login():
         if user and user.check_password(form.password.data):
             print("Logged in successfully.")
             login_user(user)
-            return redirect("/")
+            return redirect("/teachers/profile") if "TEACHER" in current_user.roles[0].name else redirect("/")
         error_message = "Неправильный логин или пароль"
         if user is None:
             error_message = "Такого пользователя не существует. Проверьте логин и пароль"
@@ -30,8 +30,8 @@ def login():
     return render_template("login.html", title="Авторизация", form=form)
 
 
-@registration_page.route("/students/registration", methods=["GET", "POST"])
-@registration_page.route("/teachers/registration", methods=["GET", "POST"])
+@user_page.route("/students/registration", methods=["GET", "POST"])
+@user_page.route("/teachers/registration", methods=["GET", "POST"])
 def registration():
     is_student = "students" in request.path
     role = "students" if is_student else "teachers"
@@ -52,6 +52,15 @@ def registration():
 
         user = User(form, role_name)
         user.save()
+        if role_name == "TEACHER":
+            return redirect("/teachers/profile")
         return redirect("/")
 
     return render_template("registration.html", title="Регистрация", form=form, role=role)
+
+
+@user_page.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")

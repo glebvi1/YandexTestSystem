@@ -1,14 +1,17 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
 
-from controllers.registration_controller import registration_page
+from controllers.profile_controller import profile_page
+from controllers.registration_controller import user_page
 from data.db_session import create_session
 from data.db_session import global_init
 from data.user import User
 
 app = Flask(__name__, template_folder="templates")
 app.config["SECRET_KEY"] = "yandex_lyceum_test_system"
-app.register_blueprint(registration_page)
+app.register_blueprint(user_page)
+app.register_blueprint(profile_page)
+
 global_init("db/test_system.sqlite")
 login_manager = LoginManager()
 login_manager.init_app(app)
