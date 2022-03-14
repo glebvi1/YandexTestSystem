@@ -42,7 +42,7 @@ def registration():
         if form.password.data != form.password2.data:
             error_message = "Пароли не совпадают"
 
-        if find_user_by_login(login) is not None:
+        if find_user_by_login(form.login.data) is not None:
             error_message = "Такой пользователь уже есть"
 
         if error_message != "":

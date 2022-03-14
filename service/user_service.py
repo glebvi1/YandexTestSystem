@@ -3,12 +3,8 @@ from data.user import User
 
 
 def get_all_students():
-    session = create_session()
-    students = session.query(User).filter(User.roles.any(name="STUDENT"))
-
-    return students
+    return create_session().query(User).filter(User.roles.any(name="STUDENT"))
 
 
 def find_user_by_login(login: str):
-    session = create_session()
-    return session.query(User).filter(User.login == login).first()
+    return create_session().query(User).filter(User.login == login).first()
