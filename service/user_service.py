@@ -7,3 +7,8 @@ def get_all_students():
     students = session.query(User).filter(User.roles.any(name="STUDENT"))
 
     return students
+
+
+def find_user_by_login(login: str):
+    session = create_session()
+    return session.query(User).filter(User.login == login).first()

@@ -3,7 +3,7 @@ from flask import request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import redirect
 
-from data.db_session import create_session
+from service.user_service import find_user_by_login
 from data.user import User
 from forms.register_form import LoginForm, RegistrationForm
 
@@ -15,8 +15,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        session = create_session()
-        user = session.query(User).filter(User.login == form.login.data).first()
+        user = find_user_by_login(form.login.data)
 
         if user and user.check_password(form.password.data):
             print("Logged in successfully.")
@@ -43,8 +42,7 @@ def registration():
         if form.password.data != form.password2.data:
             error_message = "Пароли не совпадают"
 
-        session = create_session()
-        if session.query(User).filter(User.login == form.login.data).first():
+        if find_user_by_login(login) is not None:
             error_message = "Такой пользователь уже есть"
 
         if error_message != "":
