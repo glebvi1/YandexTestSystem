@@ -16,7 +16,7 @@ class User(SqlAlchemyBase, UserMixin):
     patronymic = Column(String, nullable=False)
 
     roles = relationship("Role", secondary="user_roles")
-    characters = relationship("Group", backref="movie", lazy="dynamic")
+    groups_id = Column(String, nullable=True)
 
     def __init__(self, form, role_name):
         super().__init__()
@@ -26,9 +26,10 @@ class User(SqlAlchemyBase, UserMixin):
         self.name = form.name.data
         self.surname = form.surname.data
         self.patronymic = form.patronymic.data
-        self.role_name = role_name
         self.roles = []
-        self.groups = []
+
+        self.role_name = role_name
+        self.groups_id = ""
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -50,6 +51,16 @@ class User(SqlAlchemyBase, UserMixin):
             user_roles = UserRoles(user_id=self.id, role_id=role.id)
             session.add(user_roles)
             session.commit()
+
+    def append_group_id(self, group_id):
+        separate = ";"
+        if len(self.groups_id) == 0:
+            separate = ""
+        x = self.groups_id + f"{separate}{group_id}"
+        self.groups_id = x
+
+    def __str__(self):
+        return f"{self.name}, {self.login}, {self.groups_id}"
 
 
 class Role(SqlAlchemyBase):

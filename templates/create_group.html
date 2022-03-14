@@ -1,11 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+{% extends "base_page.html" %}
 
-</head>
-<body>
+{% block content %}
+<form method="POST" action="/teachers/create-group" class="form">
+    <div><label>Название: <input placeholder="Название группы: " name="title" type="text" class="form-control" maxlength="100" required/></label></div>
 
-</body>
-</html>
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>Логин</th>
+            <th>Добавить</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.login }}</td>
+            <td>
+                <div class="radio-container">
+                    <input type="checkbox" name="check{{ student.id }}" id="check{{ student.id }}">
+                    <label for="check{{ student.id }}">Добавить</label>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+</form>
+{% endblock %}
