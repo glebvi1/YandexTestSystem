@@ -1,5 +1,8 @@
-{% extends "start_page.html" %}
+{% extends "base_page.html" %}
 
 {% block content %}
     <h1>Здравствуйте, {{ name }}!</h1>
+    <form method="POST" action="/teachers/profile">
+        <input type="submit" value="Создать курс" name="button" />
+    </form>
 {% endblock %}

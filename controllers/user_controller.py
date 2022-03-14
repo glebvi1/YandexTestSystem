@@ -52,14 +52,12 @@ def registration():
 
         user = User(form, role_name)
         user.save()
-        if role_name == "TEACHER":
-            return redirect("/teachers/profile")
-        return redirect("/")
+        return redirect("/users/login")
 
     return render_template("registration.html", title="Регистрация", form=form, role=role)
 
 
-@user_page.route("/logout")
+@user_page.route("/users/logout")
 @login_required
 def logout():
     logout_user()

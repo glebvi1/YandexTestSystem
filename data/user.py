@@ -13,8 +13,10 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = Column(String, nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
+    patronymic = Column(String, nullable=False)
 
     roles = relationship("Role", secondary="user_roles")
+    characters = relationship("Group", backref="movie", lazy="dynamic")
 
     def __init__(self, form, role_name):
         super().__init__()
@@ -23,6 +25,7 @@ class User(SqlAlchemyBase, UserMixin):
         self.set_password(form.password.data)
         self.name = form.name.data
         self.surname = form.surname.data
+        self.patronymic = form.patronymic.data
         self.role_name = role_name
         self.roles = []
         self.groups = []
