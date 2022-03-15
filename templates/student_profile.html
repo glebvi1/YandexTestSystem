@@ -1,0 +1,18 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<h1>Здравствуйте, {{ name }}!</h1>
+
+<div class="card-columns">
+
+    {% for group in groups %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ group.name }}</h4>
+            <a href="/student/group/{{ group.id }}" class="btn btn-primary">Посмотреть</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

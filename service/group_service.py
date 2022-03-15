@@ -29,14 +29,14 @@ def connect_group_id_with_users_ids(group_id, students, teacher):
     session.commit()
 
 
-def get_all_group_by_teacher(teacher: User):
+def get_all_group_by_user(user: User):
     session = create_session()
     list_groups = []
 
-    if len(teacher.groups_id) == 0:
+    if len(user.groups_id) == 0:
         return []
 
-    for group_id in teacher.groups_id.split(";"):
+    for group_id in user.groups_id.split(";"):
         group = session.query(Group).filter(Group.id == group_id).first()
         list_groups.append(group)
 

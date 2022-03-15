@@ -22,7 +22,8 @@ def login():
         if user and user.check_password(form.password.data):
             logging.info("Logged in successfully")
             login_user(user)
-            return redirect("/teacher/profile") if "TEACHER" in current_user.roles[0].name else redirect("/")
+            return redirect("/teacher/profile") if "TEACHER" in current_user.roles[0].name \
+                else redirect("/student/profile")
         error_message = "Неправильный логин или пароль"
         if user is None:
             error_message = "Такого пользователя не существует. Проверьте логин и пароль"
