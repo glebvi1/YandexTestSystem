@@ -28,6 +28,7 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
+    logging.info("Start application")
     return render_template("start_page.html", title="Главная страница")
 
 

@@ -1,6 +1,7 @@
 from data.db_session import create_session
 from data.group import Group
 from data.user import User
+import logging
 
 
 def save_group(name, students, teacher):
@@ -12,7 +13,9 @@ def save_group(name, students, teacher):
     session.commit()
     group_id = group.id
     connect_group_id_with_users_ids(group_id, students, teacher)
-    
+
+    logging.info("Group created")
+
 
 def connect_group_id_with_users_ids(group_id, students, teacher):
     session = create_session()

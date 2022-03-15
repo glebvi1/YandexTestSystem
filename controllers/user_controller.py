@@ -1,11 +1,13 @@
+import logging
+
 from flask import render_template, Blueprint
 from flask import request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import redirect
 
-from service.user_service import find_user_by_login
 from data.user import User
 from forms.register_form import LoginForm, RegistrationForm
+from service.user_service import find_user_by_login
 
 user_page = Blueprint("user_page", __name__, template_folder="templates")
 
@@ -18,13 +20,13 @@ def login():
         user = find_user_by_login(form.login.data)
 
         if user and user.check_password(form.password.data):
-            print("Logged in successfully.")
+            logging.info("Logged in successfully")
             login_user(user)
             return redirect("/teacher/profile") if "TEACHER" in current_user.roles[0].name else redirect("/")
         error_message = "Неправильный логин или пароль"
         if user is None:
             error_message = "Такого пользователя не существует. Проверьте логин и пароль"
-
+        logging.info("Logged is badly")
         return render_template("login.html", message=error_message, form=form)
     return render_template("login.html", title="Авторизация", form=form)
 
@@ -50,13 +52,16 @@ def registration():
 
         user = User(form, role_name)
         user.save()
+        logging.info("Registration is successfully")
         return redirect("/users/login")
 
+    logging.info("Registration is badly")
     return render_template("registration.html", title="Регистрация", form=form, role=role)
 
 
 @user_page.route("/users/logout")
 @login_required
 def logout():
+    logging.info("User logout")
     logout_user()
     return redirect("/")

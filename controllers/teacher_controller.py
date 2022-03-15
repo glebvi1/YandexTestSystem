@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from werkzeug.utils import redirect
-from service.user_service import get_all_students
+
 from service.group_service import save_group, get_all_group_by_teacher
+from service.user_service import get_all_students
 
 teacher_page = Blueprint("teacher_page", __name__, template_folder="templates")
 
