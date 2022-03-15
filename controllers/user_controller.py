@@ -20,7 +20,7 @@ def login():
         if user and user.check_password(form.password.data):
             print("Logged in successfully.")
             login_user(user)
-            return redirect("/teachers/profile") if "TEACHER" in current_user.roles[0].name else redirect("/")
+            return redirect("/teacher/profile") if "TEACHER" in current_user.roles[0].name else redirect("/")
         error_message = "Неправильный логин или пароль"
         if user is None:
             error_message = "Такого пользователя не существует. Проверьте логин и пароль"
@@ -29,11 +29,11 @@ def login():
     return render_template("login.html", title="Авторизация", form=form)
 
 
-@user_page.route("/students/registration", methods=["GET", "POST"])
-@user_page.route("/teachers/registration", methods=["GET", "POST"])
+@user_page.route("/student/registration", methods=["GET", "POST"])
+@user_page.route("/teacher/registration", methods=["GET", "POST"])
 def registration():
-    is_student = "students" in request.path
-    role = "students" if is_student else "teachers"
+    is_student = "student" in request.path
+    role = "student" if is_student else "teacher"
     role_name = "STUDENT" if is_student else "TEACHER"
     form = RegistrationForm()
 

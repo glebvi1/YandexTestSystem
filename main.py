@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, render_template
 from flask_login import LoginManager
 
@@ -15,6 +17,8 @@ app.register_blueprint(teacher_page)
 global_init("db/test_system.sqlite")
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+logging.basicConfig(level=logging.INFO)
 
 
 @login_manager.user_loader

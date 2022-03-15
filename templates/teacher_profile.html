@@ -1,8 +1,23 @@
 {% extends "base_page.html" %}
 
 {% block content %}
-    <h1>Здравствуйте, {{ name }}!</h1>
-    <form method="POST" action="/teachers/profile">
-        <input type="submit" value="Создать курс" name="button" />
-    </form>
+<h1>Здравствуйте, {{ name }}!</h1>
+
+<h4>Все группы</h4>
+
+<div class="card-columns">
+
+    {% for group in groups %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ group.name }}</h4>
+            <a href="/teacher/group/{{ group.id }}" class="btn btn-primary">Посмотреть</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<form method="POST" action="/teacher/profile">
+    <input type="submit" value="Создать курс" name="button"/>
+</form>
 {% endblock %}
