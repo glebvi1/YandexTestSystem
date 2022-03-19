@@ -14,5 +14,3 @@ def group(group_id):
     logging.info(f"Group id = {group_id}")
 
     return render_template("group.html")
-
-
