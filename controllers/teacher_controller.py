@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from service.group_service import save_group, get_all_group_by_user
-from service.user_service import get_all_students
+from service.user_service import get_all_students, is_teacher
 
 teacher_page = Blueprint("teacher_page", __name__, template_folder="templates")
 
@@ -11,7 +12,8 @@ teacher_page = Blueprint("teacher_page", __name__, template_folder="templates")
 @teacher_page.route("/teacher/profile", methods=["GET"])
 @login_required
 def teacher_profile():
-    # TODO: role only TEACHER
+    if not is_teacher(current_user):
+        return abort(403)
 
     name = current_user.name + " " + current_user.patronymic
     groups = get_all_group_by_user(current_user)
@@ -22,6 +24,9 @@ def teacher_profile():
 @teacher_page.route("/teacher/profile", methods=["POST"])
 @login_required
 def teacher_profile_post():
+    if not is_teacher(current_user):
+        return abort(403)
+
     if request.form.get("button") == "Создать курс":
         return redirect("/teacher/create-group")
 
@@ -29,7 +34,9 @@ def teacher_profile_post():
 @teacher_page.route("/teacher/create-group", methods=["GET"])
 @login_required
 def create_group_get():
-    # TODO: role only TEACHER
+    if not is_teacher(current_user):
+        return abort(403)
+
     students = get_all_students()
     return render_template("create_group.html", students=students)
 
@@ -37,7 +44,8 @@ def create_group_get():
 @teacher_page.route("/teacher/create-group", methods=["POST"])
 @login_required
 def create_group_post():
-    # TODO: role only TEACHER
+    if not is_teacher(current_user):
+        return abort(403)
 
     students = get_all_students()
     chosen_students = []
