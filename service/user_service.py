@@ -11,8 +11,8 @@ def find_user_by_login(login: str):
 
 
 def is_teacher(user: User):
-    return user.roles[0] == "TEACHER"
+    return user.roles[0].name == "TEACHER"
 
 
 def is_student(user: User):
-    return user.roles[0] == "STUDENT"
+    return user.roles[0].name == "STUDENT"
