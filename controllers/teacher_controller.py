@@ -38,7 +38,6 @@ def create_group_get():
         return abort(403)
 
     students = get_all_students()
-    print(students)
     return render_template("create_group.html", students=students)
 
 
@@ -55,6 +54,14 @@ def create_group_post():
     for student in students:
         if request.form.get(f"check{student.id}") == "on":
             chosen_students.append(student)
+
+    if len(chosen_students) == 0:
+        return render_template("create_group.html", students=students, message="Вы не выбрали ни одного студента.")
+    teachers_group = get_all_group_by_user(current_user)
+    for group in teachers_group:
+        if group.name == name:
+            return render_template("create_group.html", students=students,
+                                   message="Группа с таким именем уже существует.")
 
     save_group(name, chosen_students, current_user)
 
