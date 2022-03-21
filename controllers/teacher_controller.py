@@ -38,6 +38,7 @@ def create_group_get():
         return abort(403)
 
     students = get_all_students()
+    print(students)
     return render_template("create_group.html", students=students)
 
 

@@ -8,7 +8,8 @@ from data.user import User
 
 
 def get_all_students():
-    return create_session().query(User).filter(User.roles.any(name="STUDENT"))
+    return create_session().query(User).filter((User.roles.any(name="STUDENT"))
+                                               & (User.activated_code == None))
 
 
 def find_user_by_login(login: str):
