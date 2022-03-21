@@ -1,3 +1,8 @@
+from smtplib import SMTPRecipientsRefused
+from threading import Thread
+
+from flask_mail import Message
+
 from data.db_session import create_session
 from data.user import User
 
@@ -16,3 +21,34 @@ def is_teacher(user: User):
 
 def is_student(user: User):
     return user.roles[0].name == "STUDENT"
+
+
+def send_email(title, text, recipient_email):
+    from main import app
+    message = Message(title, recipients=[recipient_email])
+    message.body = text
+
+    thr = Thread(target=async_send_mail, args=[app, message])
+    thr.start()
+
+
+def async_send_mail(app, msg):
+    from main import mail
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except SMTPRecipientsRefused:
+            pass
+
+
+def activate_account(code: str):
+    session = create_session()
+    user_from_db: User = session.query(User).filter(User.activated_code == code).first()
+
+    if user_from_db is None:
+        return False
+
+    user_from_db.activated_code = None
+    session.commit()
+
+    return True

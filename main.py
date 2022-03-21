@@ -2,25 +2,38 @@ import logging
 
 from flask import Flask, render_template
 from flask_login import LoginManager
+from flask_mail import Mail
 
+from controllers.group_controller import group_page
+from controllers.student_controller import student_page
 from controllers.teacher_controller import teacher_page
 from controllers.user_controller import user_page
-from controllers.student_controller import student_page
-from controllers.group_controller import group_page
 from data.db_session import create_session
 from data.db_session import global_init
 from data.user import User
 
 app = Flask(__name__, template_folder="templates")
 app.config["SECRET_KEY"] = "yandex_lyceum_test_system"
+
+app.config["MAIL_SERVER"] = "smtp.yandex.ru"
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = "glebnasty.glebnasty@yandex.ru"
+app.config['MAIL_DEFAULT_SENDER'] = "glebnasty.glebnasty@yandex.ru"
+app.config["MAIL_PASSWORD"] = "xbqpvozehfiusdik"
+
 app.register_blueprint(user_page)
 app.register_blueprint(teacher_page)
 app.register_blueprint(student_page)
 app.register_blueprint(group_page)
 
 global_init("db/test_system.sqlite")
+
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+mail = Mail()
+mail.init_app(app)
 
 logging.basicConfig(level=logging.INFO)
 
