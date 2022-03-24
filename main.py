@@ -13,14 +13,7 @@ from data.db_session import global_init
 from data.user import User
 
 app = Flask(__name__, template_folder="templates")
-app.config["SECRET_KEY"] = "yandex_lyceum_test_system"
-
-app.config["MAIL_SERVER"] = "smtp.yandex.ru"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = "glebnasty.glebnasty@yandex.ru"
-app.config['MAIL_DEFAULT_SENDER'] = "glebnasty.glebnasty@yandex.ru"
-app.config["MAIL_PASSWORD"] = "xbqpvozehfiusdik"
+app.config.from_object("config.DevelopmentConfig")
 
 app.register_blueprint(user_page)
 app.register_blueprint(teacher_page)
