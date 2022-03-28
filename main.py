@@ -8,6 +8,7 @@ from controllers.group_controller import group_page
 from controllers.student_controller import student_page
 from controllers.teacher_controller import teacher_page
 from controllers.user_controller import user_page
+from controllers.test_controller import test_page
 from data.db_session import create_session
 from data.db_session import global_init
 from data.user import User
@@ -19,6 +20,7 @@ app.register_blueprint(user_page)
 app.register_blueprint(teacher_page)
 app.register_blueprint(student_page)
 app.register_blueprint(group_page)
+app.register_blueprint(test_page)
 
 global_init("db/test_system.sqlite")
 

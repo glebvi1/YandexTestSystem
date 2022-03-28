@@ -1,0 +1,10 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<h1>Тесты в группе {{ module_name }}</h1>
+
+<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}/create-test">
+    <input type="submit" value="Создать тест" name="button"/>
+</form>
+
+{% endblock %}

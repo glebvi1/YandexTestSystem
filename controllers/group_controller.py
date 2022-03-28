@@ -11,13 +11,13 @@ group_page = Blueprint("group_page", __name__, template_folder="templates")
 
 @group_page.route("/teacher/group/<int:group_id>", methods=["GET", "POST"])
 @login_required
-def group_teacher_get(group_id):
+def group_teacher(group_id):
     logging.info(f"Group id = {group_id}")
 
     group = get_group(group_id)
     group_name = group.name
     modules = get_all_modules_by_group(group_id)
-    print(modules)
+
     if request.method == "POST":
         name = request.form.get("title")
         save_module(group_id, name)
@@ -37,3 +37,12 @@ def group_student(group_id):
     modules = get_all_modules_by_group(group_id)
 
     return render_template("group.html", role="student", modules=modules, group_name=group_name)
+
+
+@group_page.route("/teacher/group/<int:group_id>/module/<int:module_id>", methods=["GET"])
+@login_required
+def module(group_id, module_id):
+    if request.form.get("button") == "Создать тест":
+        return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
+
+    return render_template("module.html", group_id=group_id, module_id=module_id)

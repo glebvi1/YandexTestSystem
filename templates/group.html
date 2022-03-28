@@ -3,19 +3,6 @@
 {% block content %}
 <h1>Модули в группе {{ group_name }}</h1>
 
-<div class="card-columns">
-
-    {% for module in modules %}
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">{{ module.name }}</h4>
-            <a href="" class="btn btn-primary">Посмотреть</a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-
 {% if role == 'teacher' %}
 <form method="post" action="/teacher/group/{{ group_id }}">
     <div><label>Название: <input placeholder="Название группы: " name="title" type="text" class="form-control"
@@ -24,4 +11,18 @@
     <button type="submit" class="btn btn-primary">Создать</button>
 </form>
 {% endif %}
+
+<div class="card-columns">
+
+    {% for module in modules %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ module.name }}</h4>
+            <a href="/teacher/group/{{ group_id }}/module/{{ module.id }}" class="btn btn-primary">Посмотреть</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
 {% endblock %}

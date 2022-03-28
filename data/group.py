@@ -1,5 +1,4 @@
-from sqlalchemy import Integer, Column, ForeignKey, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, Column, String
 
 from .db_session import SqlAlchemyBase
 
@@ -33,6 +32,17 @@ class Module(SqlAlchemyBase):
     name = Column(String, nullable=False, index=True)
     group_id = Column(String, nullable=False)
 
+    tests_id = Column(String, nullable=True)
+
     def __init__(self, name, group_id):
         self.name = name
         self.group_id = group_id
+
+        self.tests_id = ""
+
+    def append_module_id(self, test_id):
+        separate = ";"
+        if len(self.tests_id) == 0:
+            separate = ""
+        x = self.modules_id + f"{separate}{test_id}"
+        self.tests_id = x
