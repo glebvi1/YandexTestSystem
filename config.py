@@ -15,5 +15,5 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
-    DEBUG = True
+    # DEBUG = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///db/test_system.sqlite?check_same_thread=False"

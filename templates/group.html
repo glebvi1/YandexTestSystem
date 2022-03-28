@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base_page.html" %}
 
-</body>
-</html>
+{% block content %}
+<h1>Модули в группе {{ group_name }}</h1>
+
+<div class="card-columns">
+
+    {% for module in modules %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ module.name }}</h4>
+            <a href="" class="btn btn-primary">Посмотреть</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% if role == 'teacher' %}
+<form method="post" action="/teacher/group/{{ group_id }}">
+    <div><label>Название: <input placeholder="Название группы: " name="title" type="text" class="form-control"
+                                 maxlength="100" required/></label></div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+</form>
+{% endif %}
+{% endblock %}

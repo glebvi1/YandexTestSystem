@@ -1,5 +1,5 @@
 from data.db_session import create_session
-from data.group import Group
+from data.group import Group, Module
 from data.user import User
 import logging
 
@@ -41,3 +41,44 @@ def get_all_group_by_user(user: User):
         list_groups.append(group)
 
     return list_groups
+
+
+def get_all_modules_by_group(group_id):
+    modules_id = get_group(group_id).modules_id
+    print(modules_id)
+    modules = parse_modules_id(modules_id)
+    return modules if len(modules) != 0 else []
+
+
+def parse_modules_id(modules_id):
+    if len(modules_id) == 0:
+        return []
+    session = create_session()
+    modules = []
+    for module_id in modules_id.split(";"):
+        module = session.query(Module).filter(Module.id == module_id).first()
+        modules.append(module)
+    return modules
+
+
+def get_group(group_id):
+    return create_session().query(Group).filter(Group.id == group_id).first()
+
+
+def save_module(group_id, name):
+    session = create_session()
+    module = Module(name, group_id)
+    session.add(module)
+    session.commit()
+    session.refresh(module)
+    session.expunge(module)
+    session.close()
+
+    print(module.id)
+    print(module.name)
+    print(module.group_id)
+
+    session = create_session()
+    group = session.query(Group).filter(Group.id == group_id).first()
+    group.append_module_id(module.id)
+    session.commit()

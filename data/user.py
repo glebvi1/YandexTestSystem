@@ -43,7 +43,7 @@ class User(SqlAlchemyBase, UserMixin):
     def save(self):
         session = create_session()
         role = session.query(Role).filter(Role.name == self.role_name).first()
-        self.activated_code = str(uuid.uuid4())
+        self.activated_code = None #str(uuid.uuid4())
 
         if role is None:
             self.roles.append(Role(name=self.role_name))
