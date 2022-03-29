@@ -40,9 +40,9 @@ class Module(SqlAlchemyBase):
 
         self.tests_id = ""
 
-    def append_module_id(self, test_id):
+    def append_test_id(self, test_id):
         separate = ";"
         if len(self.tests_id) == 0:
             separate = ""
-        x = self.modules_id + f"{separate}{test_id}"
+        x = self.tests_id + f"{separate}{test_id}"
         self.tests_id = x

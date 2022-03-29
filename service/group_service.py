@@ -1,7 +1,8 @@
+import logging
+
 from data.db_session import create_session
 from data.group import Group, Module
 from data.user import User
-import logging
 
 
 def save_group(name, students, teacher):

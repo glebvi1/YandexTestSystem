@@ -14,17 +14,17 @@ class Test(SqlAlchemyBase):
     marks = Column(String, nullable=True)
 
 
-class BaseQuestion(SqlAlchemyBase):
-    __tablename__ = "base_questions"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    quest = Column(String, nullable=True)
-    answer = Column(String, nullable=False)
-    is_right = Column(Boolean, nullable=False)
-
-
 class Question(SqlAlchemyBase):
     __tablename__ = "questions"
     id = Column(Integer, primary_key=True, autoincrement=True)
     main_quest = Column(String, nullable=False)
 
     answer_options = Column(String, nullable=True)
+
+
+class AnswerOption(SqlAlchemyBase):
+    __tablename__ = "base_questions"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    quest = Column(String, nullable=True)  # TODO: drop
+    answer = Column(String, nullable=False)
+    is_right = Column(Boolean, nullable=False)
