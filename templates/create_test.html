@@ -9,4 +9,45 @@
     </div>
     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
 </form>
+
+
+<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}/create-test">
+    <div class="form-group mt-3">
+
+        <label>Название: <input type="text" name="title" placeholder="Название теста: " class="form-control" required/></label>
+
+        <p><a class="btn btn-primary" data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Вопросы
+        </a>
+        <div class="collapse" id="collapseExample2">
+
+            {% for number in count_arr %}
+            <div class="forum-group mt-3">
+                <label>Вопрос № {{ number }}<input  placeholder="Вопрос: " name="questions" type="text" class="form-control" required/></label>
+
+                {% for n in range(1, 6) %}
+                <div>
+
+                    <label>Вариант ответа №{{ n }} <input type="text" name="answers"/></label>
+
+                    {% if loop.index == 0 %}
+                    <label>Вариант ответа №{{ n }} <input type="text" name="answers" required /></label>
+                    <input type="checkbox" name="isCorrect" value="on" checked required>Правильный
+                    <input type="hidden" name="isCorrect" value="off">
+                    {% endif %}
+
+                    <input type="checkbox" name="isCorrect" value="on" id="check{{ number }}{{ n }}" required>
+                    <label for="check{{ number }}{{ n }}">Правильный</label>
+                    <input type="hidden" name="isCorrect" value="off">
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    <button class="btn btn-primary" type="submit">Создать тест</button>
+</form>
 {% endblock %}

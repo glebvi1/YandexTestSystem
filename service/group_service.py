@@ -45,7 +45,7 @@ def get_all_group_by_user(user: User):
 
 def get_all_modules_by_group(group_id):
     modules_id = get_group(group_id).modules_id
-    print(modules_id)
+
     modules = parse_modules_id(modules_id)
     return modules if len(modules) != 0 else []
 
@@ -73,10 +73,6 @@ def save_module(group_id, name):
     session.refresh(module)
     session.expunge(module)
     session.close()
-
-    print(module.id)
-    print(module.name)
-    print(module.group_id)
 
     session = create_session()
     group = session.query(Group).filter(Group.id == group_id).first()

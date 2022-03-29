@@ -13,11 +13,13 @@ def create_test_get(group_id, module_id):
     if count_questions not in range(3, 16):
         count_questions = 5
 
-    return render_template("create_test.html", group_id=group_id, module_id=module_id)
+    return render_template("create_test.html", group_id=group_id,
+                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
 
 
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["POST"])
 @login_required
 def create_test_post(group_id, module_id):
 
-    return render_template("create_test.html", group_id=group_id, module_id=module_id)
+    return render_template("create_test.html", group_id=group_id,
+                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
