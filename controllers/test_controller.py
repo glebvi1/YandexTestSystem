@@ -28,12 +28,13 @@ def create_test_post(group_id, module_id):
         abort(403)
 
     global count_questions
+    message = ""
 
     if request.form.get("button") == "Сохранить":
         count_questions = int(request.form.get("count"))
         if count_questions not in list(range(3, 16)):
             count_questions = 5
-        return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
+            message = "Количество вопросов может быть от 3 до 15."
 
     elif request.form.get("button2") == "Создать тест":
 
@@ -55,11 +56,13 @@ def create_test_post(group_id, module_id):
                     answer.append((current_answer, is_correct))
 
             answers.append(tuple(answer))
-        print(answers)
-        create_test(name, questions, answers, marks, module_id)
+
+        if not create_test(name, questions, answers, marks, module_id):
+            message = "Тест с таким названием уже существует."
 
     return render_template("create_test.html", group_id=group_id,
-                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
+                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)],
+                           message=message)
 
 
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])

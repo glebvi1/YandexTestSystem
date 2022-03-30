@@ -52,8 +52,13 @@ def get_all_modules_by_group_id(group_id):
     return modules if len(modules) != 0 else []
 
 
-def save_module(group_id, name):
+def save_module(group_id, name) -> bool:
     session = create_session()
+
+    module_from_db = session.query(Module).filter(Module.name == name)
+    if module_from_db is not None:
+        return False
+
     module = Module(name, group_id)
     session.add(module)
     session.commit()
@@ -65,3 +70,5 @@ def save_module(group_id, name):
     group = session.query(Group).filter(Group.id == group_id).first()
     group.append_module_id(module.id)
     session.commit()
+
+    return True

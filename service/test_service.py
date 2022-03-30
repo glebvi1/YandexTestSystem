@@ -4,8 +4,13 @@ from data.test import Test, Question, AnswerOption
 from service.general_service import parse_object_ids
 
 
-def create_test(name, questions, answers, marks, module_id):
+def create_test(name, questions, answers, marks, module_id) -> bool:
     session = create_session()
+
+    test_from_db = session.query(Test).filter(Test.name == name)
+    if test_from_db is not None:
+        return False
+
     questions_id = []
 
     for index, answer in enumerate(answers):
@@ -42,23 +47,13 @@ def create_test(name, questions, answers, marks, module_id):
     module.append_test_id(test.id)
     session.commit()
 
+    return True
+
 
 def get_tests_by_module_id(module_id):
     session = create_session()
     module = session.query(Module).filter(Module.id == module_id).first()
     return parse_object_ids(module.tests_id, Test)
-
-
-# # TODO: написать универсальную функции
-# def parse_test_id(tests_id):
-#     if len(tests_id) == 0:
-#         return []
-#     session = create_session()
-#     tests = []
-#     for test_id in tests_id.split(";"):
-#         test = session.query(Test).filter(Test.id == test_id).first()
-#         tests.append(test)
-#     return tests
 
 
 def parse_question_id(questions_id):

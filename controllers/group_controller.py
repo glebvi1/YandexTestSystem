@@ -20,14 +20,17 @@ def group_teacher(group_id):
     group = get_object_by_id(group_id, Group)
     group_name = group.name
     modules = get_all_modules_by_group_id(group_id)
+    message = ""
 
     if request.method == "POST":
         name = request.form.get("title")
-        save_module(group_id, name)
-        return redirect(f"/teacher/group/{group_id}")
+        if save_module(group_id, name):
+            return redirect(f"/teacher/group/{group_id}")
+        else:
+            message = "Модуль с таким названием уже существует."
 
     return render_template("group.html", role="teacher", modules=modules,
-                           group_name=group_name, group_id=group_id)
+                           group_name=group_name, group_id=group_id, message=message)
 
 
 @group_page.route("/student/group/<int:group_id>", methods=["GET"])
@@ -50,4 +53,6 @@ def module(group_id, module_id):
 
     tests = get_tests_by_module_id(module_id)
 
-    return render_template("module.html", group_id=group_id, module_id=module_id, tests=tests)
+    return render_template("module.html", group_id=group_id, module_id=module_id,
+                           tests=tests, role="teacher")
+
