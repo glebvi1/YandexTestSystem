@@ -43,6 +43,13 @@ def create_test_post(group_id, module_id):
         answers = []
         marks = [request.form.get("mark3"), request.form.get("mark4"), request.form.get("mark5")]
 
+        for mark in marks:
+            if not (0 <= int(mark) <= 100):
+                message = "Оценка меряется в процентах. Оценка лежит в границах от 0 до 100."
+                return render_template("create_test.html", group_id=group_id,
+                                       module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)],
+                                       message=message)
+
         for question_number in range(1, count_questions + 1):
             questions.append(request.form.get(f"question{question_number}"))
 
