@@ -3,6 +3,7 @@ import logging
 from data.db_session import create_session
 from data.group import Group, Module
 from data.user import User
+from service.general_service import parse_object_ids, get_object_by_id
 
 
 def save_group(name, students, teacher):
@@ -44,26 +45,11 @@ def get_all_group_by_user(user: User):
     return list_groups
 
 
-def get_all_modules_by_group(group_id):
-    modules_id = get_group(group_id).modules_id
+def get_all_modules_by_group_id(group_id):
+    modules_id = get_object_by_id(group_id, Group).modules_id
 
-    modules = parse_modules_id(modules_id)
+    modules = parse_object_ids(modules_id, Module)
     return modules if len(modules) != 0 else []
-
-
-def parse_modules_id(modules_id):
-    if len(modules_id) == 0:
-        return []
-    session = create_session()
-    modules = []
-    for module_id in modules_id.split(";"):
-        module = session.query(Module).filter(Module.id == module_id).first()
-        modules.append(module)
-    return modules
-
-
-def get_group(group_id):
-    return create_session().query(Group).filter(Group.id == group_id).first()
 
 
 def save_module(group_id, name):

@@ -1,0 +1,24 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<h1>Тест {{ test_name }}</h1>
+
+{% for question in questions %}
+<div>
+    <h5>Вопрос №{{ loop.index }}</h5>
+    <h5>{{ question.main_quest }}</h5>
+
+    <div>
+    {% for answer_option in answer_options[loop.index0] %}
+        {% if answer_option.is_right %}
+        <h5 style="color:green;">{{ answer_option.answer }}</h5>
+        {% else %}
+        <h5 style="color:red;">{{ answer_option.answer }}</h5>
+        {% endif %}
+    {% endfor %}
+    </div>
+
+</div>
+{% endfor %}
+
+{% endblock %}

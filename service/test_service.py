@@ -1,6 +1,7 @@
 from data.db_session import create_session
 from data.group import Module
 from data.test import Test, Question, AnswerOption
+from service.general_service import parse_object_ids
 
 
 def create_test(name, questions, answers, marks, module_id):
@@ -40,3 +41,43 @@ def create_test(name, questions, answers, marks, module_id):
     module = session.query(Module).filter(Module.id == module_id).first()
     module.append_test_id(test.id)
     session.commit()
+
+
+def get_tests_by_module_id(module_id):
+    session = create_session()
+    module = session.query(Module).filter(Module.id == module_id).first()
+    return parse_object_ids(module.tests_id, Test)
+
+
+# # TODO: написать универсальную функции
+# def parse_test_id(tests_id):
+#     if len(tests_id) == 0:
+#         return []
+#     session = create_session()
+#     tests = []
+#     for test_id in tests_id.split(";"):
+#         test = session.query(Test).filter(Test.id == test_id).first()
+#         tests.append(test)
+#     return tests
+
+
+def parse_question_id(questions_id):
+    if len(questions_id) == 0:
+        return []
+    session = create_session()
+    questions = []
+    answers_options = []
+    for question_id in questions_id.split(";"):
+        question = session.query(Question).filter(Question.id == question_id).first()
+        aos = []
+        for ao_id in question.answer_options.split(";"):
+            ao = session.query(AnswerOption).filter(AnswerOption.id == ao_id).first()
+            aos.append(ao)
+
+        answers_options.append(tuple(aos))
+        questions.append(question)
+    return questions, answers_options
+
+
+def get_questions_by_test(test):
+    return parse_question_id(test.questions_id)

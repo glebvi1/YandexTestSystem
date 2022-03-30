@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, request
-from flask_login import login_required
+from flask_login import login_required, current_user
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-from service.test_service import create_test
+from data.test import Test
+from service.general_service import get_object_by_id
+from service.test_service import create_test, get_questions_by_test
+from service.user_service import is_teacher
 
 test_page = Blueprint("test_page", __name__, template_folder="templates")
 count_questions = 5
@@ -11,6 +15,8 @@ count_questions = 5
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["GET"])
 @login_required
 def create_test_get(group_id, module_id):
+    if not is_teacher(current_user):
+        abort(403)
     return render_template("create_test.html", group_id=group_id,
                            module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
 
@@ -18,6 +24,9 @@ def create_test_get(group_id, module_id):
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["POST"])
 @login_required
 def create_test_post(group_id, module_id):
+    if not is_teacher(current_user):
+        abort(403)
+
     global count_questions
 
     if request.form.get("button") == "Сохранить":
@@ -40,10 +49,7 @@ def create_test_post(group_id, module_id):
             for answer_number in range(1, 6):
                 current_answer = request.form.get(f"answer{question_number}{answer_number}")
                 is_correct = request.form.get(f"isCorrect{question_number}{answer_number}")
-                if is_correct is None:
-                    is_correct = False
-                else:
-                    is_correct = True
+                is_correct = False if is_correct is None else True
 
                 if current_answer != "":
                     answer.append((current_answer, is_correct))
@@ -54,3 +60,16 @@ def create_test_post(group_id, module_id):
 
     return render_template("create_test.html", group_id=group_id,
                            module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
+
+
+@test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
+@login_required
+def test_i(group_id, module_id, test_id):
+    test = get_object_by_id(test_id, Test)
+    name = test.name
+
+    questions, answer_options = get_questions_by_test(test)
+    print(questions)
+    print(answer_options)
+    return render_template("view_teacher_test.html", test_name=name,
+                           questions=questions, answer_options=answer_options)

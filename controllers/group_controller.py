@@ -4,7 +4,10 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from werkzeug.utils import redirect
 
-from service.group_service import get_all_modules_by_group, get_group, save_module
+from data.group import Group
+from service.general_service import get_object_by_id
+from service.group_service import get_all_modules_by_group_id, save_module
+from service.test_service import get_tests_by_module_id
 
 group_page = Blueprint("group_page", __name__, template_folder="templates")
 
@@ -14,9 +17,9 @@ group_page = Blueprint("group_page", __name__, template_folder="templates")
 def group_teacher(group_id):
     logging.info(f"Group id = {group_id}")
 
-    group = get_group(group_id)
+    group = get_object_by_id(group_id, Group)
     group_name = group.name
-    modules = get_all_modules_by_group(group_id)
+    modules = get_all_modules_by_group_id(group_id)
 
     if request.method == "POST":
         name = request.form.get("title")
@@ -32,9 +35,9 @@ def group_teacher(group_id):
 def group_student(group_id):
     logging.info(f"Group id = {group_id}")
 
-    group = get_group(group_id)
+    group = get_object_by_id(group_id, Group)
     group_name = group.name
-    modules = get_all_modules_by_group(group_id)
+    modules = get_all_modules_by_group_id(group_id)
 
     return render_template("group.html", role="student", modules=modules, group_name=group_name)
 
@@ -45,4 +48,6 @@ def module(group_id, module_id):
     if request.form.get("button") == "Создать тест":
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
 
-    return render_template("module.html", group_id=group_id, module_id=module_id)
+    tests = get_tests_by_module_id(module_id)
+
+    return render_template("module.html", group_id=group_id, module_id=module_id, tests=tests)
