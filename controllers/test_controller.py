@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from werkzeug.exceptions import abort
+from werkzeug.utils import redirect
 
 from data.test import Test
 from service.general_service import get_object_by_id
-from service.test_service import create_test, get_questions_by_test
+from service.test_service import create_test, get_questions_by_test, do_test
 from service.user_service import is_teacher, is_student
 
 test_page = Blueprint("test_page", __name__, template_folder="templates")
@@ -89,7 +90,7 @@ def test_i(group_id, module_id, test_id):
 
 @test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
 @login_required
-def do_test(group_id, module_id, test_id):
+def do_test_get(group_id, module_id, test_id):
     if not is_student(current_user):
         abort(403)
 
@@ -98,5 +99,36 @@ def do_test(group_id, module_id, test_id):
 
     questions, answer_options = get_questions_by_test(test)
 
-    return render_template("do_test.html", test_name=name,
+    return render_template("do_test.html", test_name=name, group_id=group_id, module_id=module_id, test_id=test_id,
                            questions=questions, answer_options=answer_options)
+
+
+@test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["POST"])
+@login_required
+def do_test_post(group_id, module_id, test_id):
+    if not is_student(current_user):
+        abort(403)
+
+    test = get_object_by_id(test_id, Test)
+    questions, answer_options = get_questions_by_test(test)
+
+    if request.form.get("button") == "Отправить":
+        answers = []
+
+        for number_question in range(len(questions)):
+            current_answers = []
+            count_answer_option = len(answer_options[number_question])
+            if count_answer_option == 1:
+                answer = request.form.get(f"answer{number_question}0")
+                current_answers.append(answer)
+            else:
+                for number_answer_option in range(count_answer_option):
+                    answer = request.form.get(f"answer{number_question}{number_answer_option}")
+                    if answer == "on":
+                        current_answers.append(answer_options[number_question][number_answer_option].answer)
+
+            answers.append(tuple(current_answers))
+
+        do_test(answers, test, questions, answer_options, current_user)
+
+    return redirect(f"/student/group/{group_id}/module/{module_id}")

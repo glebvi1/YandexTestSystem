@@ -1,6 +1,7 @@
 from data.db_session import create_session
 from data.group import Module
 from data.test import Test, Question, AnswerOption
+from data.user import User
 from service.general_service import parse_object_ids
 
 
@@ -76,3 +77,54 @@ def parse_question_id(questions_id):
 
 def get_questions_by_test(test):
     return parse_question_id(test.questions_id)
+
+
+def do_test(answers: list, test: Test, questions, answer_options, student: User):
+    count_right_questions = __count_right_answers(answers, questions, answer_options)
+    mark = __put_mark(test.criteria, count_right_questions, len(questions))
+    print(mark)
+
+
+def __count_right_answers(answers, questions, answer_options):
+    count_right_questions = 0
+    for number_question in range(len(questions)):
+
+        count_answer_option = len(answer_options[number_question])
+        if count_answer_option == 1:
+            answer = answers[number_question][0]
+            right_answer = answer_options[number_question][0].answer
+            if answer == right_answer:
+                count_right_questions += 1
+
+        else:
+            count_right_student_answer = 0
+            for number_answer_option in range(count_answer_option):
+                answer_option = answer_options[number_question][number_answer_option]
+                answer = answer_option.answer
+                is_right = answer_option.is_right
+
+                if (answer in answers[number_question] and is_right) or\
+                        (not is_right and answer not in answers[number_question]):
+                    count_right_student_answer += 1
+
+            if count_right_student_answer == count_answer_option:
+                count_right_questions += 1
+
+    return count_right_questions
+
+
+def __put_mark(criteria, count_right_questions, count_question):
+    tpl_criteria = tuple(map(int, criteria.split(";")))
+    mark = 2
+
+    percentage = count_right_questions / count_question * 100
+    if percentage < tpl_criteria[0]:
+        mark = 2
+    elif tpl_criteria[0] <= percentage < tpl_criteria[1]:
+        mark = 3
+    elif tpl_criteria[1] <= percentage < tpl_criteria[2]:
+        mark = 4
+    elif tpl_criteria[2] <= percentage:
+        mark = 5
+
+    return mark

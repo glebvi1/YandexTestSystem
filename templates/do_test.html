@@ -3,6 +3,7 @@
 {% block content %}
 <h1>Тест {{ test_name }}</h1>
 
+<form method="post" action="/student/group/{{ group_id }}/module/{{ module_id }}/test/{{ test_id }}">
 {% for question in questions %}
 <div>
     <h5>Вопрос №{{ loop.index }}</h5>
@@ -25,7 +26,9 @@
         {% endfor %}
         {% endif %}
     </div>
-
 </div>
 {% endfor %}
+<input type="submit" value="Отправить" name="button"/>
+</form>
+
 {% endblock %}
