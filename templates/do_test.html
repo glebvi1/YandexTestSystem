@@ -1,0 +1,31 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<h1>Тест {{ test_name }}</h1>
+
+{% for question in questions %}
+<div>
+    <h5>Вопрос №{{ loop.index }}</h5>
+    <h5>{{ question.main_quest }}</h5>
+
+    <div>
+
+        {% if answer_options[loop.index0]|length == 1 %}
+        <label><input class="form-control" type="text" name="answer{{ loop.index0 }}{{ 0 }}" placeholder="Введите ответ: " required/></label>
+        {% else %}
+
+        {% set index = loop.index0 %}
+
+        {% for answer_option in answer_options[index] %}
+        <div>
+                <label><input name="answer{{ index }}{{ loop.index0 }}" type="checkbox">
+                    {{ answer_option.answer }} </label>
+                <input name="answers" type="hidden" value="off"/>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+{% endfor %}
+{% endblock %}
