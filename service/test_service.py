@@ -79,10 +79,31 @@ def get_questions_by_test(test):
     return parse_question_id(test.questions_id)
 
 
-def do_test(answers: list, test: Test, questions, answer_options, student: User):
+def do_test(answers: list, test_id, questions, answer_options, student_id: User):
+    session = create_session()
+
+    test = session.query(Test).filter(Test.id == test_id).first()
+
     count_right_questions = __count_right_answers(answers, questions, answer_options)
     mark = __put_mark(test.criteria, count_right_questions, len(questions))
-    print(mark)
+
+    test.append_mark(student_id, mark)
+    session.commit()
+
+
+def get_marks_by_tests(tests, student_id):
+    marks = []
+    for test in tests:
+        if test.marks is None:
+            marks.append(None)
+            continue
+        for pair in test.marks.split(";"):
+            data = pair.split("-")
+            if data[0] == str(student_id):
+                marks.append(data[1])
+            else:
+                marks.append(None)
+    return marks
 
 
 def __count_right_answers(answers, questions, answer_options):

@@ -7,8 +7,8 @@ from werkzeug.utils import redirect
 from data.group import Group
 from service.general_service import get_object_by_id
 from service.group_service import get_all_modules_by_group_id, save_module
-from service.test_service import get_tests_by_module_id
-from service.user_service import is_teacher
+from service.test_service import get_tests_by_module_id, get_marks_by_tests
+from service.user_service import is_teacher, is_student
 
 group_page = Blueprint("group_page", __name__, template_folder="templates")
 
@@ -41,11 +41,19 @@ def group_teacher(group_id):
 @login_required
 def module(group_id, module_id):
     role = request.path.split("/")[1]
-    print(role)
+    marks = []
+
     if request.form.get("button") == "Создать тест":
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
     tests = get_tests_by_module_id(module_id)
 
+    #print("current_user")
+    #print(current_user)
+    #print(is_student(current_user)) error
+
+    if role == "student":
+        marks = get_marks_by_tests(tests, current_user.id)
+
     return render_template("module.html", group_id=group_id, module_id=module_id,
-                           tests=tests, role=role)
+                           tests=tests, role=role, marks=marks)
 

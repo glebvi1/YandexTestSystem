@@ -11,6 +11,8 @@ from service.user_service import is_teacher, is_student
 test_page = Blueprint("test_page", __name__, template_folder="templates")
 count_questions = 5
 
+"""Создание теста"""
+
 
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["GET"])
 @login_required
@@ -73,6 +75,9 @@ def create_test_post(group_id, module_id):
                            message=message)
 
 
+"""Просмотр теста учителем"""
+
+
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
 @login_required
 def test_i(group_id, module_id, test_id):
@@ -86,6 +91,9 @@ def test_i(group_id, module_id, test_id):
 
     return render_template("view_teacher_test.html", test_name=name,
                            questions=questions, answer_options=answer_options)
+
+
+""" Прохождение теста """
 
 
 @test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
@@ -129,6 +137,6 @@ def do_test_post(group_id, module_id, test_id):
 
             answers.append(tuple(current_answers))
 
-        do_test(answers, test, questions, answer_options, current_user)
+        do_test(answers, test_id, questions, answer_options, current_user.id)
 
     return redirect(f"/student/group/{group_id}/module/{module_id}")

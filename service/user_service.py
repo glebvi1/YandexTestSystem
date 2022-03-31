@@ -17,11 +17,11 @@ def find_user_by_login(login: str):
 
 
 def is_teacher(user: User):
-    return user.roles[0].name == "TEACHER"
+    return user.roles[0].name == "TEACHER" and user.activated_code is None
 
 
 def is_student(user: User):
-    return user.roles[0].name == "STUDENT"
+    return user.roles[0].name == "STUDENT" and user.activated_code is None
 
 
 def send_email(title, text, recipient_email):

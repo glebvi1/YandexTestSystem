@@ -13,6 +13,16 @@ class Test(SqlAlchemyBase):
     questions_id = Column(String, nullable=True)
     marks = Column(String, nullable=True)
 
+    def append_mark(self, student_id, mark):
+        separate = ";"
+        inner_separate = "-"
+        if self.marks is None:
+            x = f"{student_id}{inner_separate}{mark}"
+            self.marks = x
+        else:
+            x = f"{separate}{student_id}{inner_separate}{mark}"
+            self.marks += x
+
 
 class Question(SqlAlchemyBase):
     __tablename__ = "questions"
