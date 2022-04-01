@@ -1,4 +1,5 @@
 import os
+from db import DATABASE_NAME
 
 CONFIG_DIRECTION = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,4 +17,4 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     # DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db/test_system.sqlite?check_same_thread=False"
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///db/{DATABASE_NAME}?check_same_thread=False"

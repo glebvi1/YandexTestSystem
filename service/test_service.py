@@ -1,5 +1,3 @@
-from typing import List, Dict
-
 from data.db_session import create_session
 from data.group import Module, Group
 from data.test import Test, Question, AnswerOption

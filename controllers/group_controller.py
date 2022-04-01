@@ -9,6 +9,7 @@ from service.general_service import get_object_by_id
 from service.group_service import get_all_modules_by_group_id, save_module
 from service.test_service import get_tests_by_module_id, get_marks_by_tests
 from service.user_service import is_teacher, is_student
+from controllers import MARK_COLORS
 
 group_page = Blueprint("group_page", __name__, template_folder="templates")
 
@@ -42,10 +43,6 @@ def group_teacher(group_id):
 def module(group_id, module_id):
     role = request.path.split("/")[1]
     marks = []
-    colors = {5: "green",
-              4: "blue",
-              3: "yellow",
-              2: "red"}
 
     if request.form.get("button") == "Создать тест":
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
@@ -59,5 +56,5 @@ def module(group_id, module_id):
         marks = get_marks_by_tests(tests, current_user.id)
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
-                           tests=tests, role=role, marks=marks, colors=colors)
+                           tests=tests, role=role, marks=marks, colors=MARK_COLORS)
 
