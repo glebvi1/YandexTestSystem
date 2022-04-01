@@ -8,7 +8,7 @@ from service.general_service import parse_object_ids
 def create_test(name, questions, answers, marks, module_id) -> bool:
     session = create_session()
 
-    test_from_db = session.query(Test).filter(Test.name == name)
+    test_from_db = session.query(Test).filter((Test.name == name) & (Test.module_id == module_id))
     if test_from_db is not None:
         return False
 

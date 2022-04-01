@@ -72,3 +72,11 @@ def save_module(group_id, name) -> bool:
     session.commit()
 
     return True
+
+
+def get_all_student_by_group_id(group_id):
+    group = get_object_by_id(group_id, Group)
+    students = parse_object_ids(group.students_id, User)
+    return students
+
+
