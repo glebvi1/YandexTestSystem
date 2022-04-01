@@ -35,7 +35,7 @@ def group_statistics(group_id):
 
     return render_template("statistics.html", role="student", group_id=group_id,
                            minn=minn, mean=mean, maxx=maxx, group_name=group_name,
-                           named="курс", module_name=None)
+                           named="курс", module_name=None, module_id=None)
 
 
 @student_page.route("/student/group/<int:group_id>/module/<int:module_id>/statistics", methods=["GET"])

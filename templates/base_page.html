@@ -14,8 +14,12 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/users/logout">Выйти</a>
 
+        {% if role == "teacher" and module_id != None %}
+        <a class="navbar-brand" href="/teacher/group/{{ group_id }}/module/{{ module_id }}/journal">Журнал в модуле</a>
+        {% endif %}
+
         {% if role == "teacher" and group_id != None %}
-        <a class="navbar-brand" href="/teacher/group/{{ group_id }}/journal">Журнал</a>
+        <a class="navbar-brand" href="/teacher/group/{{ group_id }}/journal">Журнал в группе</a>
         {% endif %}
 
         {% if role == "student" and group_id != None %}

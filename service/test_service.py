@@ -5,7 +5,6 @@ from data.group import Module, Group
 from data.test import Test, Question, AnswerOption
 from data.user import User
 from service.general_service import parse_object_ids, get_object_by_id
-from service.group_service import get_all_modules_by_group_id
 
 
 def create_test(name, questions, answers, marks, module_id) -> bool:
@@ -124,11 +123,10 @@ def get_marks_by_tests(tests, student_id) -> List[int]:
     return marks
 
 
-def get_student_to_mark_in_group(group_id) -> list:
+def get_student_to_mark_in_tests(all_tests) -> list:
     lst_student_to_mark = []
-    all_tests_in_group = __get_all_test_by_group_id(group_id)
 
-    for test in all_tests_in_group:
+    for test in all_tests:
         student_to_mark = {}
         if test.marks is None:
             lst_student_to_mark.append((test.name, student_to_mark))
@@ -144,12 +142,18 @@ def get_student_to_mark_in_group(group_id) -> list:
 
 def get_all_tests_by_group_id(group_id):
     all_tests = []
-    modules = get_all_modules_by_group_id(group_id)
+    group = get_object_by_id(group_id, Group)
+    all_modules = parse_object_ids(group.modules_id, Module)
 
-    for module in modules:
-        tests = get_all_tests_by_module_id(module.id)
+    for module in all_modules:
+        tests = parse_object_ids(module.tests_id, Test)
         all_tests.extend(tests)
     return all_tests
+
+
+def get_all_test_by_module_id(module_id):
+    module = get_object_by_id(module_id, Module)
+    return parse_object_ids(module.tests_id, Test)
 
 
 def __count_right_answers(answers, questions, answer_options):
@@ -197,11 +201,3 @@ def __put_mark(criteria, count_right_questions, count_question):
     return mark
 
 
-def __get_all_test_by_group_id(group_id):
-    all_tests = []
-    group = get_object_by_id(group_id, Group)
-    all_modules = parse_object_ids(group.modules_id, Module)
-    for module in all_modules:
-        tests = parse_object_ids(module.tests_id, Test)
-        all_tests.extend(tests)
-    return all_tests

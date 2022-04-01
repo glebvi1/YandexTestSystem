@@ -3,10 +3,10 @@ from flask_login import login_required, current_user
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-from service.group_service import save_group, get_all_group_by_user, get_all_student_by_group_id
-from service.test_service import get_student_to_mark_in_group
-from service.user_service import get_all_students, is_teacher
 from controllers import MARK_COLORS
+from service.group_service import save_group, get_all_group_by_user, get_all_student_by_group_id
+from service.test_service import get_student_to_mark_in_tests, get_all_tests_by_group_id, get_all_test_by_module_id
+from service.user_service import get_all_students, is_teacher
 
 teacher_page = Blueprint("teacher_page", __name__, template_folder="templates")
 
@@ -72,10 +72,23 @@ def create_group_post():
 
 @teacher_page.route("/teacher/group/<int:group_id>/journal", methods=["GET"])
 @login_required
-def journal(group_id):
+def group_journal(group_id):
 
     students = get_all_student_by_group_id(group_id)
-    lst_student_to_mark = get_student_to_mark_in_group(group_id)
+    tests = get_all_tests_by_group_id(group_id)
+    lst_student_to_mark = get_student_to_mark_in_tests(tests)
+
+    return render_template("journal.html", students=students, lst_student_to_mark=lst_student_to_mark,
+                           colors=MARK_COLORS, module_id=None)
+
+
+@teacher_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/journal", methods=["GET"])
+@login_required
+def module_journal(group_id, module_id):
+
+    students = get_all_student_by_group_id(group_id)
+    tests = get_all_test_by_module_id(module_id)
+    lst_student_to_mark = get_student_to_mark_in_tests(tests)
 
     return render_template("journal.html", students=students, lst_student_to_mark=lst_student_to_mark,
                            colors=MARK_COLORS)

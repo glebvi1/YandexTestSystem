@@ -34,7 +34,7 @@ def group_(group_id):
             message = "Модуль с таким названием уже существует."
 
     return render_template("group.html", role=role, modules=modules,
-                           group_name=group_name, group_id=group_id, message=message)
+                           group_name=group_name, group_id=group_id, message=message, module_id=None)
 
 
 @group_page.route("/teacher/group/<int:group_id>/module/<int:module_id>", methods=["GET"])
@@ -57,4 +57,3 @@ def module(group_id, module_id):
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
                            tests=tests, role=role, marks=marks, colors=MARK_COLORS)
-

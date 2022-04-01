@@ -20,9 +20,19 @@ def get_object_by_id(object_id, Object):
 
 
 def get_statistics(data: List[str]):
-    int_data = tuple(map(int, data))
-    return min(int_data), __mean(int_data), max(int_data)
+    int_data = tuple(filter(lambda a: a is not None, data))
+    int_data = tuple(map(int, int_data))
+
+    return __min(int_data), __mean(int_data), __max(int_data)
 
 
 def __mean(data: Tuple[int]):
-    return round(sum(data) / len(data), 2)
+    return round(sum(data) / len(data), 2) if len(data) != 0 else 0
+
+
+def __min(data: Tuple[int]):
+    return min(data) if len(data) != 0 else 0
+
+
+def __max(data: Tuple[int]):
+    return max(data) if len(data) != 0 else 0
