@@ -97,12 +97,16 @@ def get_marks_by_tests(tests, student_id):
         if test.marks is None:
             marks.append(None)
             continue
+
+        value = None
         for pair in test.marks.split(";"):
             data = pair.split("-")
             if data[0] == str(student_id):
-                marks.append(data[1])
-            else:
-                marks.append(None)
+                value = data[1]
+                break
+
+        marks.append(value)
+
     return marks
 
 

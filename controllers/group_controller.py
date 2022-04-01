@@ -42,6 +42,10 @@ def group_teacher(group_id):
 def module(group_id, module_id):
     role = request.path.split("/")[1]
     marks = []
+    colors = {5: "green",
+              4: "blue",
+              3: "yellow",
+              2: "red"}
 
     if request.form.get("button") == "Создать тест":
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
@@ -55,5 +59,5 @@ def module(group_id, module_id):
         marks = get_marks_by_tests(tests, current_user.id)
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
-                           tests=tests, role=role, marks=marks)
+                           tests=tests, role=role, marks=marks, colors=colors)
 

@@ -10,11 +10,15 @@
         <div class="card-body">
             <h4 class="card-title">{{ test.name }}</h4>
 
-            {% if role == "student" and marks[loop.index0] != None %}
-            <h4 class="card-title">{{ marks[loop.index0] }}</h4>
-            {% endif %}
+            {% set mark = marks[loop.index0] %}
+            {% if role == "student" and mark != None %}
+            <font class="card-title" color="{{ colors[mark] }}">{{ mark }}</font>
 
+            {% elif role == "student" and mark == None %}
             <a href="/{{ role }}/group/{{ group_id }}/module/{{ module_id }}/test/{{ test.id }}" class="btn btn-primary">Посмотреть</a>
+            {% elif role == "teacher" %}
+            <a href="/{{ role }}/group/{{ group_id }}/module/{{ module_id }}/test/{{ test.id }}" class="btn btn-primary">Посмотреть</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

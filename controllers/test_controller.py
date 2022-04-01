@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 
 from data.test import Test
 from service.general_service import get_object_by_id
-from service.test_service import create_test, get_questions_by_test, do_test
+from service.test_service import create_test, get_questions_by_test, do_test, get_marks_by_tests
 from service.user_service import is_teacher, is_student
 
 test_page = Blueprint("test_page", __name__, template_folder="templates")
@@ -100,6 +100,9 @@ def test_i(group_id, module_id, test_id):
 @login_required
 def do_test_get(group_id, module_id, test_id):
     if not is_student(current_user):
+        abort(403)
+    marks = get_marks_by_tests([get_object_by_id(test_id, Test)], current_user.id)
+    if marks[0] is not None:
         abort(403)
 
     test = get_object_by_id(test_id, Test)
