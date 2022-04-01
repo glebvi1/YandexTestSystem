@@ -14,42 +14,9 @@ def save_group(name, students, teacher):
     session.add(group)
     session.commit()
     group_id = group.id
-    connect_group_id_with_users_ids(group_id, students, teacher)
+    __connect_group_id_with_users_ids(group_id, students, teacher)
 
     logging.info("Group created")
-
-
-def connect_group_id_with_users_ids(group_id, students, teacher):
-    session = create_session()
-    for student in students:
-        user = session.query(User).filter_by(id=student.id).first()
-        user.append_group_id(group_id)
-
-    user = session.query(User).filter_by(id=teacher.id).first()
-    user.append_group_id(group_id)
-
-    session.commit()
-
-
-def get_all_group_by_user(user: User):
-    session = create_session()
-    list_groups = []
-
-    if len(user.groups_id) == 0:
-        return []
-
-    for group_id in user.groups_id.split(";"):
-        group = session.query(Group).filter(Group.id == group_id).first()
-        list_groups.append(group)
-
-    return list_groups
-
-
-def get_all_modules_by_group_id(group_id):
-    modules_id = get_object_by_id(group_id, Group).modules_id
-
-    modules = parse_object_ids(modules_id, Module)
-    return modules if len(modules) != 0 else []
 
 
 def save_module(group_id, name) -> bool:
@@ -74,9 +41,40 @@ def save_module(group_id, name) -> bool:
     return True
 
 
+def get_all_group_by_user(user: User):
+    session = create_session()
+    list_groups = []
+
+    if len(user.groups_id) == 0:
+        return []
+
+    for group_id in user.groups_id.split(";"):
+        group = session.query(Group).filter(Group.id == group_id).first()
+        list_groups.append(group)
+
+    return list_groups
+
+
+def get_all_modules_by_group_id(group_id):
+    modules_id = get_object_by_id(group_id, Group).modules_id
+
+    modules = parse_object_ids(modules_id, Module)
+    return modules if len(modules) != 0 else []
+
+
 def get_all_student_by_group_id(group_id):
     group = get_object_by_id(group_id, Group)
     students = parse_object_ids(group.students_id, User)
     return students
 
 
+def __connect_group_id_with_users_ids(group_id, students, teacher):
+    session = create_session()
+    for student in students:
+        user = session.query(User).filter_by(id=student.id).first()
+        user.append_group_id(group_id)
+
+    user = session.query(User).filter_by(id=teacher.id).first()
+    user.append_group_id(group_id)
+
+    session.commit()

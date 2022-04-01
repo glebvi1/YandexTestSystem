@@ -17,6 +17,14 @@
         {% if role == "teacher" and group_id != None %}
         <a class="navbar-brand" href="/teacher/group/{{ group_id }}/journal">Журнал</a>
         {% endif %}
+
+        {% if role == "student" and group_id != None %}
+        <a class="navbar-brand" href="/student/group/{{ group_id }}/statistics">Успеваемость в группе</a>
+        {% endif %}
+
+        {% if role == "student" and module_id != None and group_id != None %}
+        <a class="navbar-brand" href="/student/group/{{ group_id }}/module/{{ module_id }}/statistics">Успеваемость в модуле</a>
+        {% endif %}
     </nav>
 </header>
 

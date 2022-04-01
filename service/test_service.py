@@ -1,8 +1,11 @@
+from typing import List
+
 from data.db_session import create_session
 from data.group import Module, Group
 from data.test import Test, Question, AnswerOption
 from data.user import User
 from service.general_service import parse_object_ids, get_object_by_id
+from service.group_service import get_all_modules_by_group_id
 
 
 def create_test(name, questions, answers, marks, module_id) -> bool:
@@ -51,10 +54,24 @@ def create_test(name, questions, answers, marks, module_id) -> bool:
     return True
 
 
-def get_tests_by_module_id(module_id):
+def do_test(answers: list, test_id, questions, answer_options, student_id: User):
+    """Прохождение теста учеником
+    :param answers: ответы пользователя
+    :param test_id:
+    :param questions: список вопросов данного теста
+    :param answer_options: варианты ответа данного теста
+    :param student_id:
+    :return:
+    """
     session = create_session()
-    module = session.query(Module).filter(Module.id == module_id).first()
-    return parse_object_ids(module.tests_id, Test)
+
+    test = session.query(Test).filter(Test.id == test_id).first()
+
+    count_right_questions = __count_right_answers(answers, questions, answer_options)
+    mark = __put_mark(test.criteria, count_right_questions, len(questions))
+
+    test.append_mark(student_id, mark)
+    session.commit()
 
 
 def parse_question_id(questions_id):
@@ -79,19 +96,16 @@ def get_questions_by_test(test):
     return parse_question_id(test.questions_id)
 
 
-def do_test(answers: list, test_id, questions, answer_options, student_id: User):
-    session = create_session()
-
-    test = session.query(Test).filter(Test.id == test_id).first()
-
-    count_right_questions = __count_right_answers(answers, questions, answer_options)
-    mark = __put_mark(test.criteria, count_right_questions, len(questions))
-
-    test.append_mark(student_id, mark)
-    session.commit()
+def get_all_tests_by_module_id(module_id):
+    module = get_object_by_id(module_id, Module)
+    return parse_object_ids(module.tests_id, Test)
 
 
-def get_marks_by_tests(tests, student_id):
+def get_marks_by_tests(tests, student_id) -> List[int]:
+    """Все оценки пользователя по заданным тестам
+    :param tests: тесты, по которым берем оценку; если оценки нет, то ставим None
+    :param student_id: id студента
+    """
     marks = []
     for test in tests:
         if test.marks is None:
@@ -126,6 +140,16 @@ def get_student_to_mark_in_group(group_id) -> list:
         lst_student_to_mark.append((test.name, student_to_mark))
 
     return lst_student_to_mark
+
+
+def get_all_tests_by_group_id(group_id):
+    all_tests = []
+    modules = get_all_modules_by_group_id(group_id)
+
+    for module in modules:
+        tests = get_all_tests_by_module_id(module.id)
+        all_tests.extend(tests)
+    return all_tests
 
 
 def __count_right_answers(answers, questions, answer_options):

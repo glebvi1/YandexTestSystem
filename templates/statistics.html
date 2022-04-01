@@ -1,0 +1,14 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+
+<h1>Статистика в группе "{{ group_name }}"</h1>
+{% if module_name != None %}
+<h1>Статистика в модуле "{{ module_name }}"</h1>
+{% endif %}
+
+<p><font color="green">Лучшая оценка за {{ named }}: {{ maxx }}</font></p>
+<p><font color="blue">Средняя оценка за {{ named }}: {{ mean }}</font></p>
+<p><font color="red">Худшая оценка за {{ named }}: {{ minn }}</font></p>
+
+{% endblock %}
