@@ -76,5 +76,4 @@ def journal(group_id):
     students = get_all_student_by_group_id(group_id)
     lst_student_to_mark = get_student_to_mark_in_group(group_id)
 
-    print(lst_student_to_mark)
     return render_template("journal.html", students=students, lst_student_to_mark=lst_student_to_mark)

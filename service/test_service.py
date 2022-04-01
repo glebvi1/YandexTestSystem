@@ -10,7 +10,7 @@ from service.general_service import parse_object_ids, get_object_by_id
 def create_test(name, questions, answers, marks, module_id) -> bool:
     session = create_session()
 
-    test_from_db = session.query(Test).filter((Test.name == name) & (Test.module_id == module_id))
+    test_from_db = session.query(Test).filter((Test.name == name) & (Test.module_id == module_id)).first()
     if test_from_db is not None:
         return False
 
@@ -115,10 +115,12 @@ def get_marks_by_tests(tests, student_id):
 def get_student_to_mark_in_group(group_id) -> list:
     lst_student_to_mark = []
     all_tests_in_group = __get_all_test_by_group_id(group_id)
-    print(all_tests_in_group)
 
     for test in all_tests_in_group:
         student_to_mark = {}
+        if test.marks is None:
+            lst_student_to_mark.append((test.name, student_to_mark))
+            continue
         for pair in test.marks.split(";"):
             student_id, mark = pair.split("-")
             student_to_mark[int(student_id)] = mark
