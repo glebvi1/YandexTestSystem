@@ -33,8 +33,7 @@ class Question(SqlAlchemyBase):
 
 
 class AnswerOption(SqlAlchemyBase):
-    __tablename__ = "base_questions"
+    __tablename__ = "answers_options"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    quest = Column(String, nullable=True)  # TODO: drop
     answer = Column(String, nullable=False)
     is_right = Column(Boolean, nullable=False)

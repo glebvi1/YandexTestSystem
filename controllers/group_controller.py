@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 
 from controllers import MARK_COLORS
-from data.group import Group
+from data.group import Group, Module
 from service.general_service import get_object_by_id
 from service.group_service import get_all_modules_by_group_id, save_module
 from service.test_service import get_all_tests_by_module_id, get_marks_by_tests
@@ -43,6 +43,7 @@ def group_(group_id):
 def module(group_id, module_id):
     role = request.path.split("/")[1]
     marks = []
+    module_name = get_object_by_id(module_id, Module).name
 
     if request.form.get("button") == "Создать тест":
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/create-test")
@@ -56,4 +57,5 @@ def module(group_id, module_id):
         marks = get_marks_by_tests(tests, current_user.id)
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
-                           tests=tests, role=role, marks=marks, colors=MARK_COLORS)
+                           tests=tests, role=role, marks=marks, colors=MARK_COLORS,
+                           module_name=module_name)

@@ -43,7 +43,7 @@ def group_statistics(group_id):
 def module_statistics(group_id, module_id):
 
     group_name = get_object_by_id(group_id, Group).name
-    module_name = get_object_by_id(group_id, Module).name
+    module_name = get_object_by_id(module_id, Module).name
 
     all_tests = get_all_tests_by_module_id(module_id)
     marks = get_marks_by_tests(all_tests, current_user.id)
