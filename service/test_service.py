@@ -1,8 +1,10 @@
+from typing import List, Dict
+
 from data.db_session import create_session
-from data.group import Module
+from data.group import Module, Group
 from data.test import Test, Question, AnswerOption
 from data.user import User
-from service.general_service import parse_object_ids
+from service.general_service import parse_object_ids, get_object_by_id
 
 
 def create_test(name, questions, answers, marks, module_id) -> bool:
@@ -110,6 +112,22 @@ def get_marks_by_tests(tests, student_id):
     return marks
 
 
+def get_student_to_mark_in_group(group_id) -> list:
+    lst_student_to_mark = []
+    all_tests_in_group = __get_all_test_by_group_id(group_id)
+    print(all_tests_in_group)
+
+    for test in all_tests_in_group:
+        student_to_mark = {}
+        for pair in test.marks.split(";"):
+            student_id, mark = pair.split("-")
+            student_to_mark[int(student_id)] = mark
+
+        lst_student_to_mark.append((test.name, student_to_mark))
+
+    return lst_student_to_mark
+
+
 def __count_right_answers(answers, questions, answer_options):
     count_right_questions = 0
     for number_question in range(len(questions)):
@@ -153,3 +171,13 @@ def __put_mark(criteria, count_right_questions, count_question):
         mark = 5
 
     return mark
+
+
+def __get_all_test_by_group_id(group_id):
+    all_tests = []
+    group = get_object_by_id(group_id, Group)
+    all_modules = parse_object_ids(group.modules_id, Module)
+    for module in all_modules:
+        tests = parse_object_ids(module.tests_id, Test)
+        all_tests.extend(tests)
+    return all_tests

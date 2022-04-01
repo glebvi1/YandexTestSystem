@@ -21,7 +21,8 @@ def create_test_get(group_id, module_id):
         abort(403)
 
     return render_template("create_test.html", group_id=group_id,
-                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)])
+                           module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)],
+                           role="teacher")
 
 
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["POST"])
@@ -72,7 +73,7 @@ def create_test_post(group_id, module_id):
 
     return render_template("create_test.html", group_id=group_id,
                            module_id=module_id, count_arr=[x for x in range(1, count_questions + 1)],
-                           message=message)
+                           message=message, role="teacher")
 
 
 """Просмотр теста учителем"""
@@ -90,7 +91,8 @@ def test_i(group_id, module_id, test_id):
     questions, answer_options = get_questions_by_test(test)
 
     return render_template("view_teacher_test.html", test_name=name,
-                           questions=questions, answer_options=answer_options)
+                           questions=questions, answer_options=answer_options,
+                           role="teacher", group_id=group_id)
 
 
 """ Прохождение теста """

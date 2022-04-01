@@ -3,14 +3,26 @@
 {% block content %}
 
 <table class="table">
+
     <tr>
         <th scope="col">Имя</th>
         <th scope="col">Логин</th>
+        {% for test_name, student_to_mark in lst_student_to_mark %}
+        <th scope="col">{{ test_name }}</th>
+        {% endfor %}
     </tr>
     {% for student in students %}
     <tr>
         <td>{{ student.surname + " " + student.name + " " + student.patronymic }}</td>
         <td>{{ student.login }}</td>
+
+        {% for test_name, student_to_mark in lst_student_to_mark %}
+        {% if student.id in student_to_mark %}
+        <td>{{ student_to_mark[student.id] }}</td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+        {% endfor %}
     </tr>
     {% endfor %}
 </table>
