@@ -1,13 +1,20 @@
-from typing import List
+from typing import List, Tuple, Dict
 
 from data.db_session import create_session
 from data.group import Module, Group
 from data.test import Test, Question, AnswerOption
-from data.user import User
 from service.general_service import parse_object_ids, get_object_by_id
 
 
-def create_test(name, questions, answers, marks, module_id) -> bool:
+def save_test(name: str, questions: List[str], answers: List[Tuple[Tuple[str, bool]]],
+              marks: List[str], module_id: int) -> bool:
+    """Сохранение теста в БД
+    :param name: название теста
+    :param questions: список вопросов
+    :param answers: список вариантов ответов
+    :param marks: список критерий оценивания
+    :param module_id: id модуля, в котором создается тест
+    """
     session = create_session()
 
     test_from_db = session.query(Test).filter((Test.name == name) & (Test.module_id == module_id)).first()
@@ -53,14 +60,14 @@ def create_test(name, questions, answers, marks, module_id) -> bool:
     return True
 
 
-def do_test(answers: list, test_id, questions, answer_options, student_id: User):
+def do_test(answers: List[Tuple[str]], test_id: int, questions: List[Question],
+            answer_options: List[AnswerOption], student_id: int) -> None:
     """Прохождение теста учеником
     :param answers: ответы пользователя
-    :param test_id:
+    :param test_id: id теста, который сейчас проходят
     :param questions: список вопросов данного теста
     :param answer_options: варианты ответа данного теста
-    :param student_id:
-    :return:
+    :param student_id: id ученика, который делает тест
     """
     session = create_session()
 
@@ -73,9 +80,12 @@ def do_test(answers: list, test_id, questions, answer_options, student_id: User)
     session.commit()
 
 
-def parse_question_id(questions_id):
+def parse_questions_id(questions_id: str):
+    """Достаем вопросы и варианты ответов по id вопросам
+    :param questions_id:  id вопросов
+    """
     if len(questions_id) == 0:
-        return []
+        return ()
     session = create_session()
     questions = []
     answers_options = []
@@ -91,16 +101,7 @@ def parse_question_id(questions_id):
     return questions, answers_options
 
 
-def get_questions_by_test(test):
-    return parse_question_id(test.questions_id)
-
-
-def get_all_tests_by_module_id(module_id):
-    module = get_object_by_id(module_id, Module)
-    return parse_object_ids(module.tests_id, Test)
-
-
-def get_marks_by_tests(tests, student_id) -> List[int]:
+def get_marks_by_tests(tests: List[Test], student_id: int) -> List[int]:
     """Все оценки пользователя по заданным тестам
     :param tests: тесты, по которым берем оценку; если оценки нет, то ставим None
     :param student_id: id студента
@@ -123,7 +124,10 @@ def get_marks_by_tests(tests, student_id) -> List[int]:
     return marks
 
 
-def get_student_to_mark_in_tests(all_tests) -> list:
+def get_student_to_mark_in_tests(all_tests: List[Test]) -> List[Dict[int:str]]:
+    """Создаем словарь ученик-оценка по каждому тесту
+    :param all_tests: тесты, по которым
+    """
     lst_student_to_mark = []
 
     for test in all_tests:
@@ -140,7 +144,10 @@ def get_student_to_mark_in_tests(all_tests) -> list:
     return lst_student_to_mark
 
 
-def get_all_tests_by_group_id(group_id):
+def get_all_tests_by_group_id(group_id: int) -> List[Test]:
+    """Достать все тесты в группы
+    :param group_id: id группы, из которой достаем все тесты
+    """
     all_tests = []
     group = get_object_by_id(group_id, Group)
     all_modules = parse_object_ids(group.modules_id, Module)
@@ -151,12 +158,43 @@ def get_all_tests_by_group_id(group_id):
     return all_tests
 
 
-def get_all_test_by_module_id(module_id):
+def get_all_tests_by_module_id(module_id: int) -> List[Test]:
+    """Достать из БД все тесты по модуль
+    :param module_id: id модуля, из которого достаем тесты
+    """
     module = get_object_by_id(module_id, Module)
     return parse_object_ids(module.tests_id, Test)
 
 
-def __count_right_answers(answers, questions, answer_options):
+def get_statistics(data: list) -> Tuple[int, float, int]:
+    """Статистика по данным
+    :param data: список оценок
+    """
+    int_data = tuple(filter(lambda a: a is not None, data))
+    int_data = tuple(map(int, int_data))
+
+    return __min(int_data), __mean(int_data), __max(int_data)
+
+
+def __mean(data: Tuple[int]) -> float:
+    return round(sum(data) / len(data), 2) if len(data) != 0 else 0
+
+
+def __min(data: Tuple[int]) -> int:
+    return min(data) if len(data) != 0 else 0
+
+
+def __max(data: Tuple[int]) -> int:
+    return max(data) if len(data) != 0 else 0
+
+
+def __count_right_answers(answers: List[Tuple[str]], questions: List[Question],
+                          answer_options: List[AnswerOption]) -> int:
+    """Количество правильных ответов
+    :param answers: ответы студента
+    :param questions: вопросы
+    :param answer_options: варианты ответа
+    """
     count_right_questions = 0
     for number_question in range(len(questions)):
 
@@ -184,7 +222,12 @@ def __count_right_answers(answers, questions, answer_options):
     return count_right_questions
 
 
-def __put_mark(criteria, count_right_questions, count_question):
+def __put_mark(criteria: str, count_right_questions: int, count_question: int) -> int:
+    """Возвращает оценку по критериям
+    :param criteria: критерии
+    :param count_right_questions: количество правильных ответов
+    :param count_question: количество вопросов
+    """
     tpl_criteria = tuple(map(int, criteria.split(";")))
     mark = 2
 
@@ -199,5 +242,3 @@ def __put_mark(criteria, count_right_questions, count_question):
         mark = 5
 
     return mark
-
-

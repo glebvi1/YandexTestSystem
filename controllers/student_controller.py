@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from werkzeug.exceptions import abort
 
 from data.group import Group, Module
-from service.general_service import get_statistics, get_object_by_id
-from service.group_service import get_all_group_by_user
-from service.test_service import get_marks_by_tests, get_all_tests_by_group_id, get_all_tests_by_module_id
+from service.general_service import get_object_by_id, parse_object_ids
+from service.test_service import get_marks_by_tests, get_all_tests_by_group_id, get_all_tests_by_module_id, \
+    get_statistics
 from service.user_service import is_student
 
 student_page = Blueprint("student_page", __name__, template_folder="templates")
@@ -17,7 +17,7 @@ def student_profile():
     if not is_student(current_user):
         return abort(403)
 
-    groups = get_all_group_by_user(current_user)
+    groups = parse_object_ids(current_user.groups_id, Group)
     name = current_user.name + " " + current_user.patronymic
 
     return render_template("student_profile.html", name=name, groups=groups)

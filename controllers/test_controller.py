@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 
 from data.test import Test
 from service.general_service import get_object_by_id
-from service.test_service import create_test, get_questions_by_test, do_test, get_marks_by_tests
+from service.test_service import save_test, do_test, get_marks_by_tests, parse_questions_id
 from service.user_service import is_teacher, is_student
 
 test_page = Blueprint("test_page", __name__, template_folder="templates")
@@ -68,7 +68,7 @@ def create_test_post(group_id, module_id):
 
             answers.append(tuple(answer))
 
-        if not create_test(name, questions, answers, marks, module_id):
+        if not save_test(name, questions, answers, marks, module_id):
             message = "Тест с таким названием уже существует."
 
     return render_template("create_test.html", group_id=group_id,
@@ -88,7 +88,7 @@ def test_i(group_id, module_id, test_id):
     test = get_object_by_id(test_id, Test)
     name = test.name
 
-    questions, answer_options = get_questions_by_test(test)
+    questions, answer_options = parse_questions_id(test.questions_id)
 
     return render_template("view_teacher_test.html", test_name=name,
                            questions=questions, answer_options=answer_options,
@@ -110,7 +110,7 @@ def do_test_get(group_id, module_id, test_id):
     test = get_object_by_id(test_id, Test)
     name = test.name
 
-    questions, answer_options = get_questions_by_test(test)
+    questions, answer_options = parse_questions_id(test.questions_id)
 
     return render_template("do_test.html", test_name=name, group_id=group_id, module_id=module_id, test_id=test_id,
                            questions=questions, answer_options=answer_options)
@@ -123,7 +123,7 @@ def do_test_post(group_id, module_id, test_id):
         abort(403)
 
     test = get_object_by_id(test_id, Test)
-    questions, answer_options = get_questions_by_test(test)
+    questions, answer_options = parse_questions_id(test.questions_id)
 
     if request.form.get("button") == "Отправить":
         answers = []

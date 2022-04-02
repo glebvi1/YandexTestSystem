@@ -1,5 +1,3 @@
-import uuid
-
 from flask_login import UserMixin
 from sqlalchemy import String, Integer, Column, ForeignKey
 from sqlalchemy.orm import relationship
@@ -18,7 +16,7 @@ class User(SqlAlchemyBase, UserMixin):
     patronymic = Column(String, nullable=False)
     activated_code = Column(String, nullable=True, index=True)
 
-    roles = relationship("Role", secondary="user_roles")
+    roles = relationship("Role", secondary="user_roles", lazy='subquery')
     groups_id = Column(String, nullable=True)
 
     def __init__(self, form, role_name):

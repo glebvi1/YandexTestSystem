@@ -4,8 +4,10 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from controllers import MARK_COLORS
-from service.group_service import save_group, get_all_group_by_user, get_all_student_by_group_id
-from service.test_service import get_student_to_mark_in_tests, get_all_tests_by_group_id, get_all_test_by_module_id
+from data.group import Group
+from service.general_service import parse_object_ids
+from service.group_service import save_group, get_all_student_by_group_id
+from service.test_service import get_student_to_mark_in_tests, get_all_tests_by_group_id, get_all_tests_by_module_id
 from service.user_service import get_all_students, is_teacher
 
 teacher_page = Blueprint("teacher_page", __name__, template_folder="templates")
@@ -18,7 +20,7 @@ def teacher_profile():
         return abort(403)
 
     name = current_user.name + " " + current_user.patronymic
-    groups = get_all_group_by_user(current_user)
+    groups = parse_object_ids(current_user.groups_id, Group)
 
     return render_template("teacher_profile.html", title="Профиль", name=name, groups=groups)
 
@@ -59,7 +61,7 @@ def create_group_post():
 
     if len(chosen_students) == 0:
         return render_template("create_group.html", students=students, message="Вы не выбрали ни одного студента.")
-    teachers_group = get_all_group_by_user(current_user)
+    teachers_group = parse_object_ids(current_user.groups_id, Group)
     for group in teachers_group:
         if group.name == name:
             return render_template("create_group.html", students=students,
@@ -87,7 +89,7 @@ def group_journal(group_id):
 def module_journal(group_id, module_id):
 
     students = get_all_student_by_group_id(group_id)
-    tests = get_all_test_by_module_id(module_id)
+    tests = get_all_tests_by_module_id(module_id)
     lst_student_to_mark = get_student_to_mark_in_tests(tests)
 
     return render_template("journal.html", students=students, lst_student_to_mark=lst_student_to_mark,

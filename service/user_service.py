@@ -25,6 +25,11 @@ def is_student(user: User):
 
 
 def send_email(title, text, recipient_email):
+    """Отправка письма на почту
+    :param title: тема письма
+    :param text: текст письма
+    :param recipient_email: почта получателя
+    """
     from main import app
     message = Message(title, recipients=[recipient_email])
     message.body = text
@@ -34,6 +39,7 @@ def send_email(title, text, recipient_email):
 
 
 def async_send_mail(app, msg):
+    """Отправка письма в отдельном потоке"""
     from main import mail
     with app.app_context():
         try:
@@ -42,7 +48,10 @@ def async_send_mail(app, msg):
             pass
 
 
-def activate_account(code: str):
+def activate_account(code: str) -> bool:
+    """Активация аккаунта
+    :param code: код активации
+    """
     session = create_session()
     user_from_db: User = session.query(User).filter(User.activated_code == code).first()
 
