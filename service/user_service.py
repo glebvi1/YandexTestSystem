@@ -1,3 +1,4 @@
+import uuid
 from smtplib import SMTPRecipientsRefused
 from threading import Thread
 
@@ -5,6 +6,7 @@ from flask_mail import Message
 
 from data.db_session import create_session
 from data.user import User
+from strings import TEXT_RESET_PASSWORD
 
 
 def get_all_students():
@@ -62,3 +64,38 @@ def activate_account(code: str) -> bool:
     session.commit()
 
     return True
+
+
+def verify_email(email: str) -> bool:
+    """Проверяем почту на нахождение в БД
+    :param email: почта, которую нужно проверить
+    True - если пользователь, с такой почтой существует
+    """
+    user_from_db = find_user_by_login(email)
+    return user_from_db is not None
+
+
+def forgot_password(email):
+    session = create_session()
+    user = session.query(User).filter(User.login == email).first()
+
+    code = str(uuid.uuid4())
+    user.forgot_password_code = code
+    session.commit()
+
+    text = TEXT_RESET_PASSWORD.format(code)
+    send_email("Восстановление пароля", text, email)
+
+
+def check_forgot_password_code(code) -> bool:
+    return create_session().query(User).filter(User.forgot_password_code == code).first() is not None
+
+
+def reset_password(code, new_password):
+    session = create_session()
+    user = session.query(User).filter(User.forgot_password_code == code).first()
+    if user is None:
+        return
+    user.set_password(new_password)
+    user.forgot_password_code = None
+    session.commit()

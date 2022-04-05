@@ -1,3 +1,5 @@
+import uuid
+
 from flask_login import UserMixin
 from sqlalchemy import String, Integer, Column, ForeignKey
 from sqlalchemy.orm import relationship
@@ -14,7 +16,9 @@ class User(SqlAlchemyBase, UserMixin):
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
     patronymic = Column(String, nullable=False)
+
     activated_code = Column(String, nullable=True, index=True)
+    forgot_password_code = Column(String, nullable=True, index=True)
 
     roles = relationship("Role", secondary="user_roles", lazy='subquery')
     groups_id = Column(String, nullable=True)
@@ -41,7 +45,7 @@ class User(SqlAlchemyBase, UserMixin):
     def save(self):
         session = create_session()
         role = session.query(Role).filter(Role.name == self.role_name).first()
-        self.activated_code = None #str(uuid.uuid4())
+        self.activated_code = str(uuid.uuid4())
 
         if role is None:
             self.roles.append(Role(name=self.role_name))

@@ -3,11 +3,14 @@ import logging
 from flask import render_template, Blueprint
 from flask import request
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from data.user import User
-from forms.register_form import LoginForm, RegistrationForm
-from service.user_service import find_user_by_login, activate_account, send_email
+from forms.register_form import LoginForm, RegistrationForm, ForgotPasswordForm, ResetPasswordForm
+from service.user_service import find_user_by_login, activate_account, send_email, verify_email, forgot_password, \
+    check_forgot_password_code, reset_password
+from strings import TEXT_REGISTRATION
 
 user_page = Blueprint("user_page", __name__, template_folder="templates")
 
@@ -60,15 +63,7 @@ def registration():
         user = User(form, role_name)
         user.save()
 
-        text = f""" Уважаемый {user.name} {user.patronymic}, пожалуйста, перейдите по ссылке для активации аккаунта.\n
-        http://127.0.0.1:8080/users/activate/{user.activated_code}.
-
-        также вы являетесь победителем объедененной межвузовской олимпиады 2022. для получения диплома просьба приехать в главный корпус МИРЭА
-
-        \nС уважением,
-        \nкоманда разработчиков 3его проекта Яндекс.Лицея
-        
-        """
+        text = TEXT_REGISTRATION.format(user.name, user.patronymic, user.activated_code)
 
         send_email("Код активации", text, user.login)
 
@@ -93,3 +88,36 @@ def logout():
     logging.info("User logout")
     logout_user()
     return redirect("/")
+
+
+@user_page.route("/users/forgot_password", methods=["GET", "POST"])
+def forgot_password_get_post():
+    form = ForgotPasswordForm()
+    message = ""
+
+    if form.validate_on_submit():
+        email = form.email.data
+        if verify_email(email):
+            forgot_password(email)
+            return redirect("/users/login")
+        else:
+            message = "Такая почта не найдена!"
+
+    return render_template("forgot_password.html", form=form, message=message)
+
+
+@user_page.route("/users/reset_password/<string:code>", methods=["GET", "POST"])
+def reset_password_get_post(code: str):
+    if not check_forgot_password_code(code):
+        return abort(404)
+
+    form = ResetPasswordForm()
+    message = ""
+
+    if form.validate_on_submit():
+        if form.password.data == form.password2.data:
+            reset_password(code, form.password.data)
+            return redirect("/users/login")
+        message = "Пароли не совпадают"
+
+    return render_template("reset_password.html", form=form, code=code, message=message)

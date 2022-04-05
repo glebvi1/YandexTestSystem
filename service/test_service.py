@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 from data.db_session import create_session
 from data.group import Module, Group
@@ -124,7 +124,7 @@ def get_marks_by_tests(tests: List[Test], student_id: int) -> List[int]:
     return marks
 
 
-def get_student_to_mark_in_tests(all_tests: List[Test]) -> List[Dict[int:str]]:
+def get_student_to_mark_in_tests(all_tests: List[Test]):
     """Создаем словарь ученик-оценка по каждому тесту
     :param all_tests: тесты, по которым
     """

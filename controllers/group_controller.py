@@ -9,7 +9,7 @@ from data.group import Group, Module
 from service.general_service import get_object_by_id
 from service.group_service import get_all_modules_by_group_id, save_module
 from service.test_service import get_all_tests_by_module_id, get_marks_by_tests
-from service.user_service import is_teacher
+from service.user_service import is_teacher, is_student
 
 group_page = Blueprint("group_page", __name__, template_folder="templates")
 
@@ -53,7 +53,7 @@ def module(group_id, module_id):
     #print(current_user)
     #print(is_student(current_user)) error
 
-    if role == "student":
+    if role == "student" and is_student(current_user):
         marks = get_marks_by_tests(tests, current_user.id)
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
