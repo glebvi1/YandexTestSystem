@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<div style="width:700px; height:700px; overflow:auto;">
 <table class="table">
 
     <tr>
@@ -11,6 +12,7 @@
         <th scope="col">{{ test_name }}</th>
         {% endfor %}
     </tr>
+
     {% for student in students %}
     <tr>
         <td>{{ student.surname + " " + student.name + " " + student.patronymic }}</td>
@@ -25,6 +27,7 @@
         {% endfor %}
     </tr>
     {% endfor %}
-</table>
 
+</table>
+</div>
 {% endblock %}

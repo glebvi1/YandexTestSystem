@@ -7,8 +7,8 @@ from flask_mail import Mail
 from controllers.group_controller import group_page
 from controllers.student_controller import student_page
 from controllers.teacher_controller import teacher_page
-from controllers.user_controller import user_page
 from controllers.test_controller import test_page
+from controllers.user_controller import user_page
 from data.db_session import create_session
 from data.db_session import global_init
 from data.user import User
