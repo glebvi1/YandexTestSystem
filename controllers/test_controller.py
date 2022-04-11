@@ -101,10 +101,8 @@ def test_i(group_id, module_id, test_id):
 @test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
 @login_required
 def do_test_get(group_id, module_id, test_id):
-    if not is_student(current_user):
-        abort(403)
     marks = get_marks_by_tests([get_object_by_id(test_id, Test)], current_user.id)
-    if marks[0] is not None:
+    if not is_student(current_user) or marks[0] is not None:
         abort(403)
 
     test = get_object_by_id(test_id, Test)

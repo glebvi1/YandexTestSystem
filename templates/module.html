@@ -25,8 +25,13 @@
 </div>
 
 {% if role == 'teacher' %}
-<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}/create-test">
+<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}">
     <input type="submit" value="Создать тест" name="button"/>
+</form>
+
+<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}" enctype="multipart/form-data">
+    <input type="file" name="files" multiple/>
+    <input type="submit" value="Прикрепить материалы" name="button2"/>
 </form>
 {% endif %}
 

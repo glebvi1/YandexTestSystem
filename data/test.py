@@ -9,6 +9,7 @@ class Test(SqlAlchemyBase):
     name = Column(String, nullable=False)
     module_id = Column(String, nullable=False)
     criteria = Column(String, nullable=False)
+    timer = Column(String, nullable=True, default=None)
 
     questions_id = Column(String, nullable=True)
     marks = Column(String, nullable=True)

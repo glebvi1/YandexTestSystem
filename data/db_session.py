@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as dec
@@ -10,7 +11,7 @@ SqlAlchemyBase = dec.declarative_base()
 __factory = None
 
 
-def global_init(db_file):
+def global_db_init(db_file):
     global __factory
 
     if __factory:
@@ -31,3 +32,7 @@ def global_init(db_file):
 def create_session() -> Session:
     global __factory
     return __factory()
+
+
+def global_file_init(directory: str):
+    Path(directory).mkdir(parents=True, exist_ok=True)

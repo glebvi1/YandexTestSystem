@@ -1,9 +1,11 @@
 import logging
+from pathlib import Path
 from typing import List
 
 from data.db_session import create_session
 from data.group import Group, Module
 from data.user import User
+from db import DIRECTORY_NAME
 from service.general_service import parse_object_ids, get_object_by_id
 
 
@@ -69,6 +71,28 @@ def get_all_student_by_group_id(group_id: int) -> List[User]:
     group = get_object_by_id(group_id, Group)
     students = parse_object_ids(group.students_id, User)
     return students
+
+
+def upload_materials(group_id, module_id, materials) -> None:
+    """Загрузка материалов на сервер
+    :param group_id: id группы
+    :param module_id: id модуля
+    :param materials: список материалов
+    """
+    path = __create_dir(group_id, module_id)
+    for material in materials:
+        material.save("D:/1.Code/2. Python/YandexTestSystem/" + path + material.filename)
+
+
+def get_all_materials(group_id, module_id):
+    #listdir
+    pass
+
+
+def __create_dir(group_id, module_id):
+    path = DIRECTORY_NAME + f"/group{group_id}" + f"/module{module_id}/"
+    Path(path).mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def __connect_group_id_with_users_ids(group_id: int, students: List[User], teacher: User) -> None:
