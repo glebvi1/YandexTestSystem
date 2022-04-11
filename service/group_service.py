@@ -1,7 +1,9 @@
 import logging
+import os
 from pathlib import Path
 from typing import List
 
+from config import CONFIG_DIRECTION
 from data.db_session import create_session
 from data.group import Group, Module
 from data.user import User
@@ -81,12 +83,12 @@ def upload_materials(group_id, module_id, materials) -> None:
     """
     path = __create_dir(group_id, module_id)
     for material in materials:
-        material.save("D:/1.Code/2. Python/YandexTestSystem/" + path + material.filename)
+        material.save(os.path.join(CONFIG_DIRECTION, path, material.filename))
 
 
 def get_all_materials(group_id, module_id):
-    #listdir
-    pass
+    path = DIRECTORY_NAME + f"/group{group_id}" + f"/module{module_id}/"
+    return os.listdir(path)
 
 
 def __create_dir(group_id, module_id):

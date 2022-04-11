@@ -3,6 +3,7 @@ import os
 from db import DATABASE_NAME
 
 CONFIG_DIRECTION = os.path.abspath(os.path.dirname(__file__))
+PROJECT_DIRECTORY = "D:/1.Code/2. Python/YandexTestSystem/"
 
 
 class BaseConfig:

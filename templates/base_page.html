@@ -29,6 +29,10 @@
         {% if role == "student" and module_id != None and group_id != None %}
         <a class="navbar-brand" href="/student/group/{{ group_id }}/module/{{ module_id }}/statistics">Успеваемость в модуле</a>
         {% endif %}
+
+        {% if module_id != None and group_id != None %}
+        <a class="navbar-brand" href="/{{ role }}/group/{{ group_id }}/module/{{ module_id }}/materials">Материалы</a>
+        {% endif %}
     </nav>
 </header>
 

@@ -1,0 +1,19 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<h1>Материалы в модуле "{{ module_name }}"</h1>
+
+{% if role == 'teacher' %}
+<form method="post" action="/teacher/group/{{ group_id }}/module/{{ module_id }}/materials" enctype="multipart/form-data">
+    <input type="file" name="files" multiple required/>
+    <input type="submit" value="Прикрепить материалы" name="button2"/>
+</form>
+{% endif %}
+
+<div>
+    {% for material in materials %}
+    <p><a href="/{{ role }}/group/{{ group_id }}/module/{{ module_id }}/{{ material }}">{{ material }}</a></p>
+    {% endfor %}
+</div>
+
+{% endblock %}
