@@ -7,7 +7,8 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from data.user import User
-from forms.register_form import LoginForm, RegistrationForm, ForgotPasswordForm, ResetPasswordForm
+from forms.password_form import ForgotPasswordForm, ResetPasswordForm
+from forms.register_form import LoginForm, RegistrationForm
 from service.user_service import find_user_by_login, activate_account, send_email, verify_email, forgot_password, \
     check_forgot_password_code, reset_password
 from strings import TEXT_REGISTRATION

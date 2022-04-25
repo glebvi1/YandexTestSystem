@@ -75,15 +75,15 @@ def get_all_student_by_group_id(group_id: int) -> List[User]:
     return students
 
 
-def upload_materials(group_id, module_id, materials) -> None:
+def upload_file(group_id, module_id, content, filename) -> None:
     """Загрузка материалов на сервер
     :param group_id: id группы
     :param module_id: id модуля
-    :param materials: список материалов
     """
     path = __create_dir(group_id, module_id)
-    for material in materials:
-        material.save(os.path.join(CONFIG_DIRECTION, path, material.filename))
+
+    with open(os.path.join(CONFIG_DIRECTION, path, filename), "wb") as file:
+        file.write(content)
 
 
 def get_all_materials(group_id, module_id):

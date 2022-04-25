@@ -16,6 +16,12 @@ class BaseConfig:
     MAIL_DEFAULT_SENDER = "vyazgd@mail.ru"
     MAIL_PASSWORD = "hH0SjYWnZGMT26U28402"
 
+    MAX_CONTENT_LENGTH = 16 * 1000 * 1000
+    UPLOAD_FOLDER = os.path.join(CONFIG_DIRECTION, "files")
+
+    RECAPTCHA_PUBLIC_KEY = "6LfsHpwfAAAAAOsEHZ1XD3PqHrFjJ-4ChFqoYPYs"
+    RECAPTCHA_PRIVATE_KEY = "6LfsHpwfAAAAAAYqZsvc2bUhXbLJEDi6IRPv4Y91"
+
 
 class DevelopmentConfig(BaseConfig):
     # DEBUG = True

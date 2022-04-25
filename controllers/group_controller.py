@@ -11,7 +11,7 @@ from controllers import MARK_COLORS
 from data.group import Group, Module
 from db import DIRECTORY_NAME
 from service.general_service import get_object_by_id
-from service.group_service import get_all_modules_by_group_id, save_module, upload_materials, get_all_materials
+from service.group_service import get_all_modules_by_group_id, save_module, upload_file, get_all_materials
 from service.test_service import get_all_tests_by_module_id, get_marks_by_tests
 from service.user_service import is_teacher, is_student
 
@@ -86,13 +86,24 @@ def materials_post(group_id, module_id):
     if not is_teacher(current_user):
         return abort(403)
     if request.form.get("button2") == "Прикрепить материалы":
+        from config import BaseConfig
+        print("\n\n")
+
         materials = request.files.getlist("files")
-        upload_materials(group_id, module_id, materials)
+        print(materials)
+
+        for material in materials:
+            content = material.read()
+            print(type(material))
+            if len(content) > BaseConfig.MAX_CONTENT_LENGTH:
+                continue
+
+            upload_file(group_id, module_id, content, material.filename)
         return redirect(f"/teacher/group/{group_id}/module/{module_id}/materials")
 
 
 @group_page.route("/student/group/<int:group_id>/module/<int:module_id>/<string:material_name>", methods=["GET", "POST"])
 @group_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/<string:material_name>", methods=["GET", "POST"])
-def download_material(group_id, module_id, material_name):
+def download_material(group_id, module_id, material_name: str):
     path = os.path.join(CONFIG_DIRECTION, DIRECTORY_NAME + f"/group{group_id}" + f"/module{module_id}/{material_name}")
-    return send_file(path)
+    return send_file(path, as_attachment=True)

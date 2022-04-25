@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, EmailField
 from wtforms.validators import DataRequired, Email
 
@@ -19,17 +19,5 @@ class RegistrationForm(FlaskForm):
     password = PasswordField("Пароль", validators=[DataRequired()])
     password2 = PasswordField("Повторите пароль", validators=[DataRequired()])
 
+    recaptcha = RecaptchaField(validators=[DataRequired()])
     submit = SubmitField("Зарегистрироваться")
-
-
-class ForgotPasswordForm(FlaskForm):
-    email = EmailField("Введите почту: ", validators=[DataRequired(), Email()])
-
-    submit = SubmitField("Отправить письмо")
-
-
-class ResetPasswordForm(FlaskForm):
-    password = PasswordField("Пароль", validators=[DataRequired()])
-    password2 = PasswordField("Повторите пароль", validators=[DataRequired()])
-
-    submit = SubmitField("Сохранить новый пароль")
