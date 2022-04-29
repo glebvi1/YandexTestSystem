@@ -5,6 +5,7 @@ from werkzeug.utils import redirect
 
 from data.test import Test
 from service.general_service import get_object_by_id
+from service.group_service import group_contains_user
 from service.test_service import save_test, do_test, get_marks_by_tests, parse_questions_id
 from service.user_service import is_teacher, is_student
 
@@ -17,7 +18,7 @@ count_questions = 5
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["GET"])
 @login_required
 def create_test_get(group_id, module_id):
-    if not is_teacher(current_user):
+    if not is_teacher(current_user) or not group_contains_user(group_id, current_user.id):
         abort(403)
 
     return render_template("create_test.html", group_id=group_id,
@@ -28,7 +29,7 @@ def create_test_get(group_id, module_id):
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/create-test", methods=["POST"])
 @login_required
 def create_test_post(group_id, module_id):
-    if not is_teacher(current_user):
+    if not is_teacher(current_user) or not group_contains_user(group_id, current_user.id):
         abort(403)
 
     global count_questions
@@ -82,7 +83,7 @@ def create_test_post(group_id, module_id):
 @test_page.route("/teacher/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
 @login_required
 def test_i(group_id, module_id, test_id):
-    if not is_teacher(current_user):
+    if not is_teacher(current_user) or not group_contains_user(group_id, current_user.id):
         abort(403)
 
     test = get_object_by_id(test_id, Test)
@@ -92,7 +93,7 @@ def test_i(group_id, module_id, test_id):
 
     return render_template("view_teacher_test.html", test_name=name,
                            questions=questions, answer_options=answer_options,
-                           role="teacher", group_id=group_id)
+                           role="teacher", group_id=group_id, module_id=module_id)
 
 
 """ Прохождение теста """
@@ -101,6 +102,8 @@ def test_i(group_id, module_id, test_id):
 @test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["GET"])
 @login_required
 def do_test_get(group_id, module_id, test_id):
+    if not group_contains_user(group_id, current_user.id):
+        return abort(403)
     marks = get_marks_by_tests([get_object_by_id(test_id, Test)], current_user.id)
     if not is_student(current_user) or marks[0] is not None:
         abort(403)
@@ -117,7 +120,7 @@ def do_test_get(group_id, module_id, test_id):
 @test_page.route("/student/group/<int:group_id>/module/<int:module_id>/test/<int:test_id>", methods=["POST"])
 @login_required
 def do_test_post(group_id, module_id, test_id):
-    if not is_student(current_user):
+    if not is_student(current_user) or not group_contains_user(group_id, current_user.id):
         abort(403)
 
     test = get_object_by_id(test_id, Test)

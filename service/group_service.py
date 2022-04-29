@@ -91,6 +91,11 @@ def get_all_materials(group_id, module_id):
     return os.listdir(path)
 
 
+def group_contains_user(group_id, user_id) -> bool:
+    group = get_object_by_id(group_id, Group)
+    return str(user_id) in group.students_id or str(user_id) in group.teacher_id
+
+
 def __create_dir(group_id, module_id):
     path = DIRECTORY_NAME + f"/group{group_id}" + f"/module{module_id}/"
     Path(path).mkdir(parents=True, exist_ok=True)

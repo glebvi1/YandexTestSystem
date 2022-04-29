@@ -19,5 +19,5 @@ class RegistrationForm(FlaskForm):
     password = PasswordField("Пароль", validators=[DataRequired()])
     password2 = PasswordField("Повторите пароль", validators=[DataRequired()])
 
-    recaptcha = RecaptchaField(validators=[DataRequired()])
+    recaptcha = RecaptchaField()
     submit = SubmitField("Зарегистрироваться")
