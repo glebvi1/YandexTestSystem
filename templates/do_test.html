@@ -3,24 +3,6 @@
 {% block content %}
 <h1>Тест {{ test_name }}</h1>
 
-<span class="timer" id="timer">Оставшееся время: {{ rest }}</span>
-
-<script type="application/javascript">
-        const timerElement = document.getElementById("timer");
-
-        var timerCounter = 60;
-        const interval = setInterval(() => {
-            if (timerCounter <= 1) {
-                clearInterval(interval);
-
-            }
-            timerCounter = timerCounter - 1;
-
-            timerElement.innerText = timerCounter;
-            progressBar.value = timerCounter;
-        }, 1000);
-</script>
-
 <form method="post" action="/student/group/{{ group_id }}/module/{{ module_id }}/test/{{ test_id }}">
 {% for question in questions %}
 <div>

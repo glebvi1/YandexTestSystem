@@ -27,7 +27,7 @@ def group_i(group_id):
         return abort(403)
 
     logging.info(f"Group id = {group_id}")
-    role = request.path.split("/")[1]
+    role = "student" if is_student(current_user) else "teacher"
 
     group = get_object_by_id(group_id, Group)
     group_name = group.name
@@ -52,10 +52,9 @@ def module_i_get(group_id, module_id):
     if not group_contains_user(group_id, current_user.id):
         return abort(403)
 
-    role = request.path.split("/")[1]
+    role = "student" if is_student(current_user) else "teacher"
     marks = []
     module_name = get_object_by_id(module_id, Module).name
-    materials = get_all_materials(group_id, module_id)
     tests = get_all_tests_by_module_id(module_id)
 
     if role == "student" and is_student(current_user):
@@ -63,7 +62,7 @@ def module_i_get(group_id, module_id):
 
     return render_template("module.html", group_id=group_id, module_id=module_id,
                            tests=tests, role=role, marks=marks, colors=MARK_COLORS,
-                           module_name=module_name, materials=materials)
+                           module_name=module_name)
 
 
 @group_page.route("/teacher/group/<int:group_id>/module/<int:module_id>", methods=["POST"])
@@ -97,14 +96,10 @@ def materials_post(group_id, module_id):
         return abort(403)
     if request.form.get("button2") == "Прикрепить материалы":
         from config import BaseConfig
-        print("\n\n")
-
         materials = request.files.getlist("files")
-        print(materials)
 
         for material in materials:
             content = material.read()
-            print(type(material))
             if len(content) > BaseConfig.MAX_CONTENT_LENGTH:
                 continue
 

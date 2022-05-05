@@ -88,7 +88,8 @@ def upload_file(group_id, module_id, content, filename) -> None:
 
 def get_all_materials(group_id, module_id):
     path = DIRECTORY_NAME + f"/group{group_id}" + f"/module{module_id}/"
-    return os.listdir(path)
+
+    return os.listdir(path) if os.path.isdir(path) else []
 
 
 def group_contains_user(group_id, user_id) -> bool:

@@ -24,5 +24,4 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
-    # DEBUG = True
     SQLALCHEMY_DATABASE_URI = f"sqlite:///db/{DATABASE_NAME}?check_same_thread=False"
